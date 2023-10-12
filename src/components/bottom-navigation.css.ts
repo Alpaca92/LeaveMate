@@ -19,3 +19,7 @@ export const svg = style({
   stroke: 'black',
   strokeWidth: '1.5px',
 });
+
+export const activeSvg = style({
+  stroke: 'red',
+});
