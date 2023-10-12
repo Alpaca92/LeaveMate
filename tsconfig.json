@@ -26,7 +26,8 @@
       "@/*": ["src/*"],
       "@/components/*": ["src/components/*"],
       "@/assets/*": ["src/assets/*"],
-      "@/routes/*": ["src/routes/*"]
+      "@/routes/*": ["src/routes/*"],
+      "@/themes/*": ["src/themes/*"]
     }
   },
   "include": ["src"],
