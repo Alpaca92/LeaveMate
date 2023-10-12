@@ -1,7 +1,8 @@
+import { vars } from '@/themes/theme.css';
 import { style } from '@vanilla-extract/css';
 
 export const container = style({
-  borderTop: '1px solid black',
+  backgroundColor: vars.bottomNavigationBackground,
 });
 
 export const icons = style({
@@ -16,10 +17,10 @@ export const icon = style({
 });
 
 export const svg = style({
-  stroke: 'black',
+  stroke: vars.icon,
   strokeWidth: '1.5px',
 });
 
 export const activeSvg = style({
-  stroke: 'red',
+  stroke: vars.highlight,
 });
