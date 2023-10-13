@@ -7,3 +7,5 @@ export const vars = createThemeContract({
   highlight: null,
   icon: null,
 });
+
+export const base = null;
