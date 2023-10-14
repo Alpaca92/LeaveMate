@@ -3,6 +3,7 @@ import { container, listContainer } from '@/routes/profile.css';
 export default function Profile() {
   return (
     <article className={container}>
+      <p>Profile</p>
       <ul className={listContainer}>
         <li>
           <p>이름</p>

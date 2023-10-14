@@ -1,4 +1,4 @@
-import { createThemeContract } from '@vanilla-extract/css';
+import { createThemeContract, fontFace, style } from '@vanilla-extract/css';
 
 export const vars = createThemeContract({
   text: null,
@@ -8,4 +8,10 @@ export const vars = createThemeContract({
   icon: null,
 });
 
-export const base = null;
+const comicSans = fontFace({
+  src: 'local("../assets/fonts/NanumSquare")',
+});
+
+export const base = style({
+  fontFamily: comicSans,
+});
