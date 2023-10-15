@@ -1,3 +1,14 @@
+import * as styles from './login.css';
+
 export default function Login() {
-  return <h1>Login</h1>;
+  return (
+    <article className={styles.container}>
+      <p>Login</p>
+      <form className={styles.form}>
+        <input />
+        <input />
+        <button>Login</button>
+      </form>
+    </article>
+  );
 }

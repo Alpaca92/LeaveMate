@@ -1,10 +1,10 @@
-import { container, listContainer } from '@/routes/profile.css';
+import * as styles from '@/routes/profile.css';
 
 export default function Profile() {
   return (
-    <article className={container}>
+    <article className={styles.container}>
       <p>Profile</p>
-      <ul className={listContainer}>
+      <ul className={styles.listContainer}>
         <li>
           <p>이름</p>
           <p>성이름</p>
