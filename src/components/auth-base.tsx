@@ -3,10 +3,11 @@ import * as styles from './auth-base.css';
 import { useForm } from 'react-hook-form';
 import { AuthInput } from '@/types';
 import { useMemo, useState } from 'react';
+import { UserCredential } from 'firebase/auth';
 
 interface AuthBaseProps {
   type: 'login' | 'signup';
-  onSubmit: ({ email, password }: AuthInput) => void;
+  onSubmit: ({ email, password }: AuthInput) => Promise<UserCredential>;
 }
 
 export default function AuthBase({ type, onSubmit }: AuthBaseProps) {
@@ -20,7 +21,9 @@ export default function AuthBase({ type, onSubmit }: AuthBaseProps) {
 
     try {
       setIsLoading(true);
-      onSubmit && (await onSubmit({ email, password }));
+      const userCredential = onSubmit && (await onSubmit({ email, password })); // TODO: Error 발생 시 해당 Error에 대한 toast 띄우기
+
+      // console.log(userCredential.user.uid);
 
       if (isLogin) {
         navigator('/');

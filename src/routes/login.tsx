@@ -5,7 +5,7 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 
 export default function Login() {
   const onSubmit = async ({ email, password }: AuthInput) => {
-    await signInWithEmailAndPassword(auth, email, password);
+    return await signInWithEmailAndPassword(auth, email, password);
   };
 
   return <AuthBase type="login" onSubmit={onSubmit} />;

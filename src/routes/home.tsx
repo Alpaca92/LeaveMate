@@ -1,3 +1,10 @@
 export default function Home() {
-  return <h1>HOME !!!</h1>;
+  return (
+    <article>
+      <div>
+        <span>내 결재</span>
+        <span>결재 대기 중</span>
+      </div>
+    </article>
+  );
 }
