@@ -23,12 +23,7 @@
     /* Path alias */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@/components/*": ["src/components/*"],
-      "@/assets/*": ["src/assets/*"],
-      "@/routes/*": ["src/routes/*"],
-      "@/themes/*": ["src/themes/*"],
-      "@/types/*": ["src/types/*"]
+      "@/*": ["src/*"]
     }
   },
   "include": ["src"],

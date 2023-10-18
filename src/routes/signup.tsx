@@ -1,5 +1,5 @@
 import AuthBase from '@/components/auth-base';
-import { auth } from '@/firebase';
+import { auth } from '@/config/firebase';
 import { AuthInput } from '@/types';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 

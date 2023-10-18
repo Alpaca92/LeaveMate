@@ -1,4 +1,4 @@
-import { auth } from '@/firebase';
+import { auth } from '@/config/firebase';
 import { PATH_NAME } from '@/router';
 import { Navigate, useLocation } from 'react-router-dom';
 
