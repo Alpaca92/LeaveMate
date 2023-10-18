@@ -18,6 +18,10 @@ export default function Profile() {
           <p>개발 1팀</p>
         </li>
         <li>
+          <p>직급</p>
+          <p>팀원</p>
+        </li>
+        <li>
           <p>결재자</p>
           <p>팀장님</p>
         </li>
