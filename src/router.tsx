@@ -1,10 +1,12 @@
 import Layout from '@/components/layout';
 import Calendar from '@/routes/calendar';
 import Home from '@/routes/home';
+import Login from '@/routes/login';
 import Profile from '@/routes/profile';
 import { createBrowserRouter } from 'react-router-dom';
 
 const PATH_NAME = {
+  LOGIN: '/login',
   HOME: '/',
   CALENDAR: '/calendar',
   PROFILE: '/profile',
@@ -17,6 +19,10 @@ const router = createBrowserRouter([
     path: '/',
     element: <Layout />,
     children: [
+      {
+        path: PATH_NAME.LOGIN,
+        element: <Login />,
+      },
       {
         path: PATH_NAME.HOME,
         element: <Home />,
