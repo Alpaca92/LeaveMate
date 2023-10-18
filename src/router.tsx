@@ -7,6 +7,7 @@ import { createBrowserRouter } from 'react-router-dom';
 
 const PATH_NAME = {
   LOGIN: '/login',
+  SIGNUP: '/signup',
   HOME: '/',
   CALENDAR: '/calendar',
   PROFILE: '/profile',

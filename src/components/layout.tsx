@@ -1,5 +1,6 @@
 import BottomNavigation from '@/components/bottom-navigation';
 import { container } from '@/components/layout.css';
+import ProtectRoutes from '@/components/protect-routes';
 import { darkTheme } from '@/themes/dark.css';
 import { lightTheme } from '@/themes/light.css';
 import { base } from '@/themes/theme.css';
