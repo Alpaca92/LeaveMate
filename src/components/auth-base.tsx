@@ -7,7 +7,7 @@ import { UserCredential } from 'firebase/auth';
 
 interface AuthBaseProps {
   type: 'login' | 'signup';
-  onSubmit: ({ email, password }: AuthInput) => Promise<UserCredential>;
+  onSubmit: ({ email, password }: AuthInput) => Promise<UserCredential | void>;
 }
 
 export default function AuthBase({ type, onSubmit }: AuthBaseProps) {
@@ -21,9 +21,7 @@ export default function AuthBase({ type, onSubmit }: AuthBaseProps) {
 
     try {
       setIsLoading(true);
-      const userCredential = onSubmit && (await onSubmit({ email, password })); // TODO: Error 발생 시 해당 Error에 대한 toast 띄우기
-
-      // console.log(userCredential.user.uid);
+      onSubmit && (await onSubmit({ email, password })); // TODO: Error 발생 시 해당 Error에 대한 toast 띄우기
 
       if (isLogin) {
         navigator('/');
