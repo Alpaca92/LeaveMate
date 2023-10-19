@@ -63,10 +63,13 @@ const ICONS: Icon[] = [
 export default function BottomNavigation() {
   return (
     <nav>
-      <ul className="h-full flex justify-around items-center py-4 border-t">
+      <ul className="flex h-full items-center justify-around border-t border-light-text-secondary py-4 dark:border-dark-text-secondary">
         {ICONS.map((ICON, i) => (
           <li key={i}>
-            <Link to={ICON.path} className="stroke-black block w-8">
+            <Link
+              to={ICON.path}
+              className="dark:stroke-dark-text-secondastroke-light-text-secondary block w-8 stroke-light-text-secondary"
+            >
               {ICON.icon}
             </Link>
           </li>
