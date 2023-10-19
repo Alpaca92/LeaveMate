@@ -68,7 +68,7 @@ export default function BottomNavigation() {
           <li key={i}>
             <Link
               to={ICON.path}
-              className="dark:stroke-dark-text-secondastroke-light-text-secondary block w-8 stroke-light-text-secondary"
+              className="block w-8 stroke-light-text-secondary dark:stroke-dark-text-secondary"
             >
               {ICON.icon}
             </Link>

@@ -1,8 +1,9 @@
-import Layout from '@/components/layout';
-import { PATH_NAME } from '@/config/config';
-import Login from '@/routes/login';
-import Signup from '@/routes/signup';
 import { createBrowserRouter } from 'react-router-dom';
+import { PATH_NAME } from '@/config/config';
+import Layout from '@/components/layout';
+import Login from '@/routes/login';
+import Profile from '@/routes/profile';
+import Signup from '@/routes/signup';
 
 const router = createBrowserRouter([
   {
@@ -25,10 +26,10 @@ const router = createBrowserRouter([
       //   path: PATH_NAME.CALENDAR,
       //   element: <Calendar />,
       // },
-      // {
-      //   path: PATH_NAME.PROFILE,
-      //   element: <Profile />,
-      // },
+      {
+        path: PATH_NAME.PROFILE,
+        element: <Profile />,
+      },
     ],
   },
 ]);
