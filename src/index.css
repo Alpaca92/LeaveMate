@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: 'noto';
+  src: url('./assets/fonts/NotoSans.ttf');
+}
+
+@font-face {
+  font-family: 'nanum';
+  src: url('./assets/fonts/NanumSquare.otf');
+}

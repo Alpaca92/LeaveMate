@@ -30,6 +30,9 @@ export default {
           },
         },
       },
+      fontFamily: {
+        sans: ['noto', 'nanum'],
+      },
     },
   },
   plugins: [],
