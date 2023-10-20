@@ -34,6 +34,8 @@ const ERROR_MESSAGES = {
   PASSWORD_VALIDATION: 'Passwords must be at least 6 characters long.',
 };
 
+const PRIVATE_PATHS = [PATH_NAME.HOME, PATH_NAME.CALENDAR, PATH_NAME.PROFILE];
+
 Object.freeze(PATH_NAME);
 Object.freeze(COLLECTIONS_NAME);
 Object.freeze(USER_ROLE);
@@ -41,6 +43,7 @@ Object.freeze(LOCALSTORAGE_KEYS);
 Object.freeze(THEMES);
 Object.freeze(REGEX);
 Object.freeze(ERROR_MESSAGES);
+Object.freeze(PRIVATE_PATHS);
 
 export {
   PATH_NAME,
@@ -50,4 +53,5 @@ export {
   THEMES,
   REGEX,
   ERROR_MESSAGES,
+  PRIVATE_PATHS,
 };

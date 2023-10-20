@@ -34,6 +34,25 @@ export default {
         sans: ['noto', 'nanum'],
       },
     },
+    keyframes: {
+      loader: {
+        '0%': {
+          'box-shadow': '-38px -12px, -14px 0, 14px 0, 38px 0',
+        },
+        '33%': {
+          'box-shadow': '-38px 0px, -14px -12px, 14px 0, 38px 0',
+        },
+        '66%': {
+          'box-shadow': '-38px 0px, -14px 0, 14px -12px, 38px 0',
+        },
+        '100%': {
+          'box-shadow': '-38px 0, -14px 0, 14px 0, 38px -12px',
+        },
+      },
+    },
+    animation: {
+      loading: 'loader 1s linear infinite alternate',
+    },
   },
   plugins: [],
 };
