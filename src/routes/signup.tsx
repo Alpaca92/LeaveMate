@@ -34,10 +34,12 @@ export default function Signup() {
       await updateProfile(userCredential.user, {
         displayName: name,
       });
+      await auth.signOut();
+
+      navigator(PATH_NAME.LOGIN);
     } catch (error) {
       console.error(error);
     } finally {
-      navigator(PATH_NAME.LOGIN);
       setIsLoading(false);
     }
   };

@@ -16,12 +16,8 @@ export default function RouteGuard({ children }: RouteGuardProps) {
   );
 
   if (user) {
-    console.log('have user');
-
     return hasEnteredPrivatePath ? children : <Navigate to={PATH_NAME.HOME} />;
   } else {
-    console.log('no user');
-
     return hasEnteredPrivatePath ? <Navigate to={PATH_NAME.LOGIN} /> : children;
   }
 }

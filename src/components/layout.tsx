@@ -1,8 +1,7 @@
 import BottomNavigation from '@/components/bottom-navigation';
 import RouteGuard from '@/components/route-guard';
 import { PRIVATE_PATHS } from '@/config/config';
-import { auth } from '@/config/firebase';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
 export default function Layout() {
@@ -11,16 +10,6 @@ export default function Layout() {
     () => PRIVATE_PATHS.includes(location.pathname),
     [location],
   );
-
-  const init = async () => {
-    const user = await auth.authStateReady();
-
-    console.log('user: ', user);
-  };
-
-  useEffect(() => {
-    init();
-  }, []);
 
   return (
     <RouteGuard>
