@@ -1,5 +1,5 @@
 import { PATH_NAME } from '@/config/config';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 interface Icon {
   path: string;
@@ -61,6 +61,8 @@ const ICONS: Icon[] = [
 ];
 
 export default function BottomNavigation() {
+  const location = useLocation();
+
   return (
     <nav>
       <ul className="flex h-full items-center justify-around border-t border-light-text-secondary py-4 dark:border-dark-text-secondary">
@@ -68,7 +70,11 @@ export default function BottomNavigation() {
           <li key={i}>
             <Link
               to={ICON.path}
-              className="block w-8 stroke-light-text-secondary dark:stroke-dark-text-secondary"
+              className={`block w-8 ${
+                location.pathname === ICON.path
+                  ? 'stroke-light-background-accent dark:stroke-dark-background-accent'
+                  : 'stroke-light-text-secondary dark:stroke-dark-text-secondary'
+              }`}
             >
               {ICON.icon}
             </Link>
