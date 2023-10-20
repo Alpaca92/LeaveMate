@@ -4,6 +4,8 @@ import Layout from '@/components/layout';
 import Login from '@/routes/login';
 import Profile from '@/routes/profile';
 import Signup from '@/routes/signup';
+import Home from '@/routes/home';
+import Calendar from '@/routes/calendar';
 
 const router = createBrowserRouter([
   {
@@ -18,14 +20,14 @@ const router = createBrowserRouter([
         path: PATH_NAME.SIGNUP,
         element: <Signup />,
       },
-      // {
-      //   path: PATH_NAME.HOME,
-      //   element: <Home />,
-      // },
-      // {
-      //   path: PATH_NAME.CALENDAR,
-      //   element: <Calendar />,
-      // },
+      {
+        path: PATH_NAME.HOME,
+        element: <Home />,
+      },
+      {
+        path: PATH_NAME.CALENDAR,
+        element: <Calendar />,
+      },
       {
         path: PATH_NAME.PROFILE,
         element: <Profile />,
