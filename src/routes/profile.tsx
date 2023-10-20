@@ -1,6 +1,5 @@
 import { ERROR_MESSAGES, REGEX } from '@/config/config';
 import { auth } from '@/config/firebase';
-import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 interface ProfileInput {
@@ -10,20 +9,13 @@ interface ProfileInput {
 }
 
 export default function Profile() {
-  const { register, handleSubmit, setValue } = useForm<ProfileInput>();
-
-  console.log(auth.currentUser);
-
-  const fetchUserData = async () => {
-    const user = await auth.currentUser;
-    if (!user) return;
-
-    setValue('name', 'ma');
-  };
-
-  useEffect(() => {
-    fetchUserData();
-  }, []);
+  const user = auth.currentUser;
+  const { register, handleSubmit } = useForm<ProfileInput>({
+    defaultValues: {
+      name: user?.displayName ?? '',
+      email: user?.email ?? '',
+    },
+  });
 
   return (
     <article className="flex flex-col items-center justify-center">
