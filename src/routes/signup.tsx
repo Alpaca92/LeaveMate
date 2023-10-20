@@ -1,5 +1,6 @@
-import { ERROR_MESSAGES, PATH_NAME, REGEX } from '@/config/config';
+import { ERROR_TYPES, PATH_NAME, REGEX } from '@/config/config';
 import { auth } from '@/config/firebase';
+import Utils from '@/utils';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -67,7 +68,9 @@ export default function Signup() {
             required: true,
             pattern: {
               value: REGEX.EMAIL,
-              message: ERROR_MESSAGES.EMAIL_VALIDATION,
+              message: Utils.getErrorMessage(
+                ERROR_TYPES.COMMON.EMAIL_VALIDATION,
+              ),
             },
           })}
         />
@@ -80,7 +83,9 @@ export default function Signup() {
             required: true,
             minLength: {
               value: 6,
-              message: ERROR_MESSAGES.PASSWORD_VALIDATION,
+              message: Utils.getErrorMessage(
+                ERROR_TYPES.COMMON.PASSWORD_VALIDATION,
+              ),
             },
           })}
         />

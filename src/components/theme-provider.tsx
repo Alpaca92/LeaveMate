@@ -1,4 +1,5 @@
 import { LOCALSTORAGE_KEYS, THEMES } from '@/config/config';
+import Utils from '@/utils';
 import { useEffect } from 'react';
 
 interface ThemeProviderProps {
@@ -7,7 +8,7 @@ interface ThemeProviderProps {
 
 export default function ThemeProvider({ children }: ThemeProviderProps) {
   useEffect(() => {
-    const theme = localStorage.getItem(LOCALSTORAGE_KEYS.THEME);
+    const theme = Utils.getTheme();
 
     switch (theme) {
       case THEMES.DARK:

@@ -1,6 +1,7 @@
-import { ERROR_MESSAGES, REGEX } from '@/config/config';
+import { ERROR_TYPES, REGEX } from '@/config/config';
 import { auth } from '@/config/firebase';
 import { useForm } from 'react-hook-form';
+import Utils from './../utils/index';
 
 interface ProfileInput {
   name: string;
@@ -53,7 +54,9 @@ export default function Profile() {
             required: true,
             pattern: {
               value: REGEX.EMAIL,
-              message: ERROR_MESSAGES.EMAIL_VALIDATION,
+              message: Utils.getErrorMessage(
+                ERROR_TYPES.COMMON.EMAIL_VALIDATION,
+              ),
             },
           })}
         />

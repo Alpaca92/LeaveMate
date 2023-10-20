@@ -1,9 +1,13 @@
-import { ERROR_MESSAGES, PATH_NAME, REGEX } from '@/config/config';
+import { ERROR_TYPES, PATH_NAME, REGEX } from '@/config/config';
 import { auth } from '@/config/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
+import Utils from './../utils/index';
+import { FirebaseError } from 'firebase/app';
+import { Theme, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/ReactToastify.min.css';
 
 interface SignupInput {
   email: string;
@@ -15,6 +19,13 @@ export default function Login() {
   const { register, handleSubmit } = useForm<SignupInput>();
   const navigator = useNavigate();
 
+  const notify = (message: string) => {
+    toast.error(message, {
+      position: toast.POSITION.TOP_RIGHT,
+      theme: Utils.getTheme() as Theme,
+    });
+  };
+
   const onSubmit = async (data: SignupInput) => {
     const { email, password } = data;
 
@@ -23,13 +34,16 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      const user = await signInWithEmailAndPassword(auth, email, password);
-
-      console.log(user);
+      await signInWithEmailAndPassword(auth, email, password);
+      navigator(PATH_NAME.HOME);
     } catch (error) {
       console.error(error);
+
+      if (error instanceof FirebaseError) {
+        const message = Utils.getErrorMessage(ERROR_TYPES.FIREBASE[error.code]);
+        notify(message);
+      }
     } finally {
-      navigator(PATH_NAME.HOME);
       setIsLoading(false);
     }
   };
@@ -50,7 +64,9 @@ export default function Login() {
             required: true,
             pattern: {
               value: REGEX.EMAIL,
-              message: ERROR_MESSAGES.EMAIL_VALIDATION,
+              message: Utils.getErrorMessage(
+                ERROR_TYPES.COMMON.EMAIL_VALIDATION,
+              ),
             },
           })}
         />
@@ -63,7 +79,9 @@ export default function Login() {
             required: true,
             minLength: {
               value: 6,
-              message: ERROR_MESSAGES.PASSWORD_VALIDATION,
+              message: Utils.getErrorMessage(
+                ERROR_TYPES.COMMON.PASSWORD_VALIDATION,
+              ),
             },
           })}
         />
@@ -83,6 +101,7 @@ export default function Login() {
           Create an account
         </Link>
       </span>
+      <ToastContainer />
     </article>
   );
 }
