@@ -16,12 +16,6 @@ const COLLECTIONS_NAME = Object.freeze({
   USERS: 'users',
 });
 
-const USER_ROLE = Object.freeze({
-  MASTER: 1,
-  APPROVER: 2,
-  MEMBER: 3,
-});
-
 const LOCALSTORAGE_KEYS = Object.freeze({
   THEME: 'theme',
 });
@@ -54,7 +48,6 @@ export {
   PATH_NAME,
   PRIVATE_PATHS,
   COLLECTIONS_NAME,
-  USER_ROLE,
   LOCALSTORAGE_KEYS,
   THEMES,
   REGEX,

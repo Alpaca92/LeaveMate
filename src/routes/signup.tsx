@@ -3,7 +3,6 @@ import {
   ERROR_TYPES,
   PATH_NAME,
   REGEX,
-  USER_ROLE,
 } from '@/config/config';
 import { auth, db } from '@/config/firebase';
 import Utils from '@/utils';
@@ -40,10 +39,6 @@ export default function Signup() {
 
       await updateProfile(userCredential.user, {
         displayName: name,
-      });
-
-      await setDoc(doc(db, COLLECTIONS_NAME.USERS, userCredential.user.uid), {
-        role: USER_ROLE.MEMBER,
       });
 
       await auth.signOut();

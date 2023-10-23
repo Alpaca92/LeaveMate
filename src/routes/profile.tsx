@@ -22,7 +22,7 @@ export default function Profile() {
     defaultValues: {
       name: user?.displayName ?? '',
       email: user?.email ?? '',
-      approver: '',
+      approver: '', // FIXME: 결재자를 한 번 선택하면 이를 기억함, 또한 profile에서 결재자를 선택하면 기안을 올릴 때 결재자가 자동으로 선택
     },
   });
 
@@ -115,7 +115,6 @@ export default function Profile() {
             },
           })}
         />
-        {/*TODO: approver는 USER_ROLE 1, 2중에 선택할 수 있도록 popup 형태로 구현 */}
         <input
           className="rounded-lg px-3 py-2 focus:outline-none"
           required
