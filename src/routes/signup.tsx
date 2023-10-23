@@ -1,13 +1,7 @@
-import {
-  COLLECTIONS_NAME,
-  ERROR_TYPES,
-  PATH_NAME,
-  REGEX,
-} from '@/config/config';
-import { auth, db } from '@/config/firebase';
+import { ERROR_TYPES, PATH_NAME, REGEX } from '@/config/config';
+import { auth } from '@/config/firebase';
 import Utils from '@/utils';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';

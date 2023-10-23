@@ -20,12 +20,12 @@ export default function Modal({
   return containerRef.current && isShow
     ? createPortal(
         <>
-          <dialog className="absolute top-[20%] z-50 block h-1/2 w-4/5 rounded-3xl bg-light-background-main dark:bg-dark-background-main">
+          <dialog className="absolute top-[45%] z-50 block w-4/5 translate-y-[-50%] rounded-3xl bg-light-background-main p-10 text-light-text-main shadow-2xl dark:bg-dark-background-main dark:text-dark-text-main">
             {children}
           </dialog>
           <div
             onClick={onClose}
-            className="fixed left-0 top-0 h-full w-full bg-gray-800 opacity-70"
+            className="fixed left-0 top-0 h-full w-full bg-gray-950 opacity-70"
           />
         </>,
         containerRef.current,
