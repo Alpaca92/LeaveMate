@@ -1,8 +1,10 @@
 import { ERROR_TYPES, REGEX } from '@/config/config';
-import { auth } from '@/config/firebase';
+import { auth, storage } from '@/config/firebase';
 import { useForm } from 'react-hook-form';
 import Utils from './../utils/index';
 import { useState } from 'react';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { updateProfile } from 'firebase/auth';
 
 interface ProfileInput {
   name: string;
@@ -17,14 +19,34 @@ export default function Profile() {
     defaultValues: {
       name: user?.displayName ?? '',
       email: user?.email ?? '',
+      approver: '',
     },
   });
+
+  const onAvatarUpdate = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!user) return;
+
+    const { files } = event.target;
+
+    if (files && files.length === 1) {
+      const file = files[0];
+      const storageRef = ref(storage, `avatars/${user?.uid}`);
+      const result = await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(result.ref);
+
+      setAvartarUrl(url);
+
+      await updateProfile(user, {
+        photoURL: url,
+      });
+    }
+  };
 
   return (
     <article className="flex flex-col items-center justify-center">
       <label
         htmlFor="avatar"
-        className="flex h-48 w-48 cursor-pointer items-center justify-center rounded-full border border-dark-background-main bg-light-background-secondary p-4 dark:border-light-background-main dark:bg-dark-background-secondary"
+        className="flex h-48 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-light-background-secondary dark:border-light-background-main dark:bg-dark-background-secondary"
       >
         {avatarUrl ? (
           <img src={avatarUrl} />
@@ -43,8 +65,13 @@ export default function Profile() {
           </svg>
         )}
       </label>
-      {/* TODO: onClick, set accpetable file extension */}
-      <input type="file" name="avatar" className="hidden" />
+      <input
+        id="avatar"
+        className="hidden"
+        type="file"
+        accept="image/*"
+        onChange={onAvatarUpdate}
+      />
       <form className="mt-10 flex w-4/5 flex-col space-y-4 text-light-text-main">
         <input
           className="rounded-lg px-3 py-2 focus:outline-none"
