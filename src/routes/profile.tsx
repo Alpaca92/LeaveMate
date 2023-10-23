@@ -1,10 +1,11 @@
-import { ERROR_TYPES, REGEX } from '@/config/config';
+import { ERROR_TYPES, PATH_NAME, REGEX } from '@/config/config';
 import { auth, storage } from '@/config/firebase';
 import { useForm } from 'react-hook-form';
 import Utils from './../utils/index';
 import { useState } from 'react';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { updateProfile } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
 
 interface ProfileInput {
   name: string;
@@ -14,6 +15,8 @@ interface ProfileInput {
 
 export default function Profile() {
   const user = auth.currentUser;
+  const navigator = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const [avatarUrl, setAvartarUrl] = useState(user?.photoURL);
   const { register, handleSubmit } = useForm<ProfileInput>({
     defaultValues: {
@@ -39,6 +42,20 @@ export default function Profile() {
       await updateProfile(user, {
         photoURL: url,
       });
+    }
+  };
+
+  const onLogout = async (event: React.MouseEvent<HTMLElement>) => {
+    event.preventDefault();
+    setIsLoading(true);
+
+    try {
+      await auth.signOut();
+      navigator(PATH_NAME.LOGIN);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -108,7 +125,16 @@ export default function Profile() {
             required: true,
           })}
         />
+        <button className="!mt-10 rounded-lg bg-light-text-main py-3 font-semibold dark:bg-dark-text-main">
+          {isLoading ? 'Loading...' : 'Edit'}
+        </button>
       </form>
+      <button
+        onClick={onLogout}
+        className="mt-3 w-4/5 rounded-lg bg-light-text-main py-3 font-semibold text-dark-text-main dark:bg-dark-text-main dark:text-light-text-main"
+      >
+        Logout
+      </button>
     </article>
   );
 }
