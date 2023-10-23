@@ -13,11 +13,15 @@ const PRIVATE_PATHS: readonly string[] = Object.freeze([
 ]);
 
 const COLLECTIONS_NAME = Object.freeze({
-  USERS: 'users',
+  REQUESTS: 'requests',
 });
 
 const LOCALSTORAGE_KEYS = Object.freeze({
   THEME: 'theme',
+});
+
+const PORTAL_KEYS = Object.freeze({
+  MODAL: 'modal',
 });
 
 const THEMES = Object.freeze({
@@ -49,6 +53,7 @@ export {
   PRIVATE_PATHS,
   COLLECTIONS_NAME,
   LOCALSTORAGE_KEYS,
+  PORTAL_KEYS,
   THEMES,
   REGEX,
   ERROR_TYPES,
