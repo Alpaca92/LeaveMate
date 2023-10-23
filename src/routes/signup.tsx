@@ -1,7 +1,14 @@
-import { ERROR_TYPES, PATH_NAME, REGEX } from '@/config/config';
-import { auth } from '@/config/firebase';
+import {
+  COLLECTIONS_NAME,
+  ERROR_TYPES,
+  PATH_NAME,
+  REGEX,
+  USER_ROLE,
+} from '@/config/config';
+import { auth, db } from '@/config/firebase';
 import Utils from '@/utils';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
@@ -34,6 +41,11 @@ export default function Signup() {
       await updateProfile(userCredential.user, {
         displayName: name,
       });
+
+      await setDoc(doc(db, COLLECTIONS_NAME.USERS, userCredential.user.uid), {
+        role: USER_ROLE.MEMBER,
+      });
+
       await auth.signOut();
 
       navigator(PATH_NAME.LOGIN);
