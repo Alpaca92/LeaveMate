@@ -25,7 +25,7 @@ export default function Modal({
           </dialog>
           <div
             onClick={onClose}
-            className="fixed left-0 top-0 h-full w-full bg-gray-950 opacity-70"
+            className="fixed left-0 top-0 h-full w-full bg-gray-900 opacity-70"
           />
         </>,
         containerRef.current,

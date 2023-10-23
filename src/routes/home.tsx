@@ -6,22 +6,34 @@ import 'react-datepicker/dist/react-datepicker.min.css';
 
 interface RequestInput {
   reason: string;
-  startMeridiem: string;
   startDate: Date;
+  startMeridiem: string;
+  endDate: Date;
+  endMeridiem: string;
 }
 
 export default function Home() {
+  const DATE_NOW = new Date(Date.now());
   const [isLoading, setIsLoading] = useState(false);
   const [isShow, setIsShow] = useState(false);
-  const [startDate, setStartDate] = useState(new Date(Date.now()));
+  const [startDate, setStartDate] = useState(DATE_NOW);
+  const [endDate, setEndDate] = useState(DATE_NOW);
   const { register, handleSubmit, control } = useForm<RequestInput>({
     defaultValues: {
       reason: '일신상의 사유',
     },
   });
-  const { field } = useController({
+  const { field: startField } = useController({
     name: 'startDate',
     defaultValue: startDate,
+    control,
+    rules: {
+      required: true,
+    },
+  });
+  const { field: endField } = useController({
+    name: 'endDate',
+    defaultValue: endDate,
     control,
     rules: {
       required: true,
@@ -37,8 +49,13 @@ export default function Home() {
   };
 
   const onStartDateChange = (date: Date) => {
-    field.onChange(date);
+    startField.onChange(date);
     setStartDate(date);
+  };
+
+  const onEndDateChange = (date: Date) => {
+    endField.onChange(date);
+    setEndDate(date);
   };
 
   const onSubmit = async (data: RequestInput) => {
@@ -83,7 +100,7 @@ export default function Home() {
               selected={startDate}
               startDate={startDate}
               dateFormat="yyyy/MM/dd"
-              name={field.name}
+              name={startField.name}
             />
             <select
               required
@@ -92,8 +109,36 @@ export default function Home() {
                 required: true,
               })}
             >
-              <option value="am">오전</option>
+              <option value="am" selected>
+                오전
+              </option>
               <option value="pm">오후</option>
+            </select>
+          </div>
+          <label htmlFor="end-date" className="mt-1">
+            종료일
+          </label>
+          <div className="mt-1 flex justify-between">
+            <DatePicker
+              id="end-date"
+              className="rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
+              onChange={onEndDateChange}
+              selected={endDate}
+              endDate={endDate}
+              dateFormat="yyyy/MM/dd"
+              name={endField.name}
+            />
+            <select
+              required
+              className="rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
+              {...register('endMeridiem', {
+                required: true,
+              })}
+            >
+              <option value="am">오전</option>
+              <option value="pm" selected>
+                오후
+              </option>
             </select>
           </div>
           <button
