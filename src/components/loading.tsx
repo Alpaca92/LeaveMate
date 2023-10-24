@@ -1,16 +1,5 @@
-import clsx from 'clsx';
-
-interface LoadingProps {
-  className?: string;
-}
-
-export default function Loading({ className }: LoadingProps) {
+export default function Loading() {
   return (
-    <span
-      className={clsx(
-        'animate-loading relative mx-auto my-4 box-border block h-12 w-12 rounded-full text-white',
-        className,
-      )}
-    />
+    <span className="relative mx-auto my-4 box-border block h-2 w-2 animate-loading rounded-full text-white" />
   );
 }
