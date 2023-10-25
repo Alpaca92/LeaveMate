@@ -22,9 +22,8 @@ export default function Signup() {
 
     if (!name || !email || !password) return;
 
-    setIsLoading(true);
-
     try {
+      setIsLoading(true);
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,

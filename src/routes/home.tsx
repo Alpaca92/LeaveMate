@@ -1,9 +1,11 @@
 import Modal from '@/components/modal';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useController, useForm } from 'react-hook-form';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.min.css';
-
+import { addDoc, collection } from 'firebase/firestore';
+import { auth, db } from '@/config/firebase';
+import { COLLECTIONS_NAME } from '@/config/config';
 interface RequestInput {
   reason: string;
   startDate: Date;
@@ -13,19 +15,20 @@ interface RequestInput {
 }
 
 export default function Home() {
+  const user = auth.currentUser;
   const DATE_NOW = new Date(Date.now());
   const [isLoading, setIsLoading] = useState(false);
   const [isShow, setIsShow] = useState(false);
-  const [startDate, setStartDate] = useState(DATE_NOW);
-  const [endDate, setEndDate] = useState(DATE_NOW);
   const { register, handleSubmit, control } = useForm<RequestInput>({
     defaultValues: {
       reason: '일신상의 사유',
+      startMeridiem: 'am',
+      endMeridiem: 'pm',
     },
   });
   const { field: startField } = useController({
     name: 'startDate',
-    defaultValue: startDate,
+    defaultValue: DATE_NOW,
     control,
     rules: {
       required: true,
@@ -33,7 +36,7 @@ export default function Home() {
   });
   const { field: endField } = useController({
     name: 'endDate',
-    defaultValue: endDate,
+    defaultValue: DATE_NOW,
     control,
     rules: {
       required: true,
@@ -50,17 +53,54 @@ export default function Home() {
 
   const onStartDateChange = (date: Date) => {
     startField.onChange(date);
-    setStartDate(date);
   };
 
   const onEndDateChange = (date: Date) => {
     endField.onChange(date);
-    setEndDate(date);
   };
 
-  const onSubmit = async (data: RequestInput) => {
-    console.log(data);
+  const onSubmit = async ({
+    reason,
+    endDate,
+    endMeridiem,
+    startDate,
+    startMeridiem,
+  }: RequestInput) => {
+    try {
+      setIsLoading(true);
+
+      if (
+        !user?.uid ||
+        !user?.displayName ||
+        !reason ||
+        !endDate ||
+        !endMeridiem ||
+        !startDate ||
+        !startMeridiem
+      ) {
+        return;
+      }
+
+      await addDoc(collection(db, COLLECTIONS_NAME.REQUESTS), {
+        userId: user?.uid,
+        username: user?.displayName,
+        createdAt: Date.now(),
+        reason,
+        endDate,
+        endMeridiem,
+        startDate,
+        startMeridiem,
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  useEffect(() => {
+    console.log(startField.value);
+  }, [startField.value]);
 
   return (
     <article className="relative">
@@ -97,8 +137,8 @@ export default function Home() {
               id="start-date"
               className="rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
               onChange={onStartDateChange}
-              selected={startDate}
-              startDate={startDate}
+              selected={startField.value}
+              startDate={startField.value}
               dateFormat="yyyy/MM/dd"
               name={startField.name}
             />
@@ -109,9 +149,7 @@ export default function Home() {
                 required: true,
               })}
             >
-              <option value="am" selected>
-                오전
-              </option>
+              <option value="am">오전</option>
               <option value="pm">오후</option>
             </select>
           </div>
@@ -123,8 +161,8 @@ export default function Home() {
               id="end-date"
               className="rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
               onChange={onEndDateChange}
-              selected={endDate}
-              endDate={endDate}
+              selected={endField.value}
+              endDate={endField.value}
               dateFormat="yyyy/MM/dd"
               name={endField.name}
             />
@@ -136,9 +174,7 @@ export default function Home() {
               })}
             >
               <option value="am">오전</option>
-              <option value="pm" selected>
-                오후
-              </option>
+              <option value="pm">오후</option>
             </select>
           </div>
           <button

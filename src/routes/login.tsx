@@ -31,9 +31,8 @@ export default function Login() {
 
     if (!email || !password) return;
 
-    setIsLoading(true);
-
     try {
+      setIsLoading(true);
       await signInWithEmailAndPassword(auth, email, password);
       navigator(PATH_NAME.HOME);
     } catch (error) {

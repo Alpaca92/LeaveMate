@@ -47,9 +47,9 @@ export default function Profile() {
 
   const onLogout = async (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
-    setIsLoading(true);
 
     try {
+      setIsLoading(true);
       await auth.signOut();
       navigator(PATH_NAME.LOGIN);
     } catch (error) {
