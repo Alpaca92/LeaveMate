@@ -12,6 +12,12 @@ const PRIVATE_PATHS: readonly string[] = Object.freeze([
   PATH_NAME.PROFILE,
 ]);
 
+const USER_ROLES = Object.freeze({
+  MASTER: '0',
+  LEADER: '1',
+  MEMBER: '2',
+});
+
 const COLLECTIONS_NAME = Object.freeze({
   REQUESTS: 'requests',
 });
@@ -51,6 +57,7 @@ const ERROR_TYPES: {
 export {
   PATH_NAME,
   PRIVATE_PATHS,
+  USER_ROLES,
   COLLECTIONS_NAME,
   LOCALSTORAGE_KEYS,
   PORTAL_KEYS,
