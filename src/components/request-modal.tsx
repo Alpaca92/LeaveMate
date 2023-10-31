@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useController, useForm } from 'react-hook-form';
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
 import { auth, db } from '@/config/firebase';
 import { COLLECTIONS_NAME } from '@/config/config';
 import DatePicker from 'react-datepicker';
@@ -16,6 +16,7 @@ interface RequestInput {
   startMeridiem: string;
   endDate: Date;
   endMeridiem: string;
+  approver: string;
 }
 
 export default function RequestModal({ controller }: RequestModalProps) {
@@ -45,6 +46,22 @@ export default function RequestModal({ controller }: RequestModalProps) {
       required: true,
     },
   });
+
+  const setApproverSnapshot = async () => {
+    const approverQuery = query(
+      collection(db, COLLECTIONS_NAME.USERS),
+      where('role', 'in', ['0', '1', '2']),
+    );
+
+    const approverSnapshot = await getDocs(approverQuery);
+
+    approverSnapshot.forEach((doc) => {
+      console.log(doc.id);
+      console.log(doc.data());
+    });
+
+    // setApprovers(approverSnapshot);
+  };
 
   const onStartDateChange = (date: Date) => {
     startField.onChange(date);
@@ -95,24 +112,30 @@ export default function RequestModal({ controller }: RequestModalProps) {
     }
   };
 
+  // FIXME: TEST
+  useEffect(() => {
+    setApproverSnapshot();
+  }, []);
+
   return (
     <>
       <h1 className="text-xl font-extrabold">휴가 신청</h1>
-      <form className="mt-3 flex flex-col" onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className="mt-3 flex flex-col space-y-1"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <label htmlFor="reason">사유</label>
         <textarea
           required
           id="reason"
           rows={3}
-          className="mt-1 w-full resize-none rounded-lg px-3 py-2 text-light-text-main focus:outline-none"
+          className="w-full resize-none rounded-lg px-3 py-2 text-light-text-main focus:outline-none"
           {...register('reason', {
             required: true,
           })}
         />
-        <label htmlFor="start-date" className="mt-1">
-          시작일
-        </label>
-        <div className="mt-1 flex justify-between">
+        <label htmlFor="start-date">시작일</label>
+        <div className="flex justify-between">
           <DatePicker
             id="start-date"
             className="rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
@@ -124,7 +147,7 @@ export default function RequestModal({ controller }: RequestModalProps) {
           />
           <select
             required
-            className="rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
+            className="h-10 rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
             {...register('startMeridiem', {
               required: true,
             })}
@@ -133,10 +156,8 @@ export default function RequestModal({ controller }: RequestModalProps) {
             <option value="pm">오후</option>
           </select>
         </div>
-        <label htmlFor="end-date" className="mt-1">
-          종료일
-        </label>
-        <div className="mt-1 flex justify-between">
+        <label htmlFor="end-date">종료일</label>
+        <div className="flex justify-between">
           <DatePicker
             id="end-date"
             className="rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
@@ -148,7 +169,7 @@ export default function RequestModal({ controller }: RequestModalProps) {
           />
           <select
             required
-            className="rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
+            className="h-10 rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
             {...register('endMeridiem', {
               required: true,
             })}
@@ -157,6 +178,18 @@ export default function RequestModal({ controller }: RequestModalProps) {
             <option value="pm">오후</option>
           </select>
         </div>
+        <label htmlFor="approver">결재자</label>
+        <select
+          id="approver"
+          required
+          className="h-10 rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
+          {...register('approver', {
+            required: true,
+          })}
+        >
+          {/* <option value="am">오전</option>
+          <option value="pm">오후</option> */}
+        </select>
         <button
           disabled={isLoading}
           className="!mt-5 w-full rounded-lg bg-light-text-main py-3 font-semibold text-dark-text-main dark:bg-dark-text-main dark:text-light-text-main"
