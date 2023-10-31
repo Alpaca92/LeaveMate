@@ -1,11 +1,24 @@
-import { ERROR_TYPES, PATH_NAME, REGEX } from '@/config/config';
-import { auth, storage } from '@/config/firebase';
+import {
+  COLLECTIONS_NAME,
+  ERROR_TYPES,
+  PATH_NAME,
+  REGEX,
+} from '@/config/config';
+import { auth, db, storage } from '@/config/firebase';
 import { useForm } from 'react-hook-form';
 import Utils from './../utils/index';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { updateProfile } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
+import {
+  DocumentData,
+  QuerySnapshot,
+  collection,
+  getDocs,
+  query,
+  where,
+} from 'firebase/firestore';
 
 interface ProfileInput {
   name: string;
@@ -18,6 +31,8 @@ export default function Profile() {
   const navigator = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [avatarUrl, setAvartarUrl] = useState(user?.photoURL);
+  const [approvers, setApprovers] =
+    useState<QuerySnapshot<DocumentData, DocumentData>>();
   const { register, handleSubmit } = useForm<ProfileInput>({
     defaultValues: {
       name: user?.displayName ?? '',
@@ -59,6 +74,26 @@ export default function Profile() {
     }
   };
 
+  const setApproverSnapshot = async () => {
+    const approverQuery = query(
+      collection(db, COLLECTIONS_NAME.USERS),
+      where('role', 'in', ['0', '1', '2']),
+    );
+
+    const approverSnapshot = await getDocs(approverQuery);
+
+    approverSnapshot.forEach((doc) => {
+      console.log(doc.id);
+      console.log(doc.data());
+    });
+
+    // setApprovers(approverSnapshot);
+  };
+
+  useEffect(() => {
+    setApproverSnapshot();
+  }, []);
+
   return (
     <article className="flex flex-col items-center justify-center">
       <label
@@ -72,7 +107,7 @@ export default function Profile() {
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            className="h-full w-full stroke-light-background-accent stroke-1 dark:stroke-dark-background-accent"
+            className="h-full w-full stroke-light-background-accent stroke-1 p-5 dark:stroke-dark-background-accent"
           >
             <path
               strokeLinecap="round"
@@ -115,15 +150,16 @@ export default function Profile() {
             },
           })}
         />
-        <input
-          className="rounded-lg px-3 py-2 focus:outline-none"
+        <select
           required
-          placeholder="결재자"
-          type="text"
+          value="1"
+          className="h-10 rounded-lg px-3 py-2 focus:outline-none"
           {...register('approver', {
             required: true,
           })}
-        />
+        >
+          {/* FIXME: OPTION */}
+        </select>
         <button className="!mt-10 rounded-lg bg-light-text-main py-3 font-semibold dark:bg-dark-text-main">
           {isLoading ? 'Loading...' : 'Edit'}
         </button>

@@ -8,7 +8,7 @@ import {
 import { auth, db } from '@/config/firebase';
 import Utils from '@/utils';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, doc, setDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
@@ -41,7 +41,12 @@ export default function Signup() {
         displayName: name,
       });
 
-      await addDoc(collection(db, COLLECTIONS_NAME.USERS), {
+      // await addDoc(collection(db, COLLECTIONS_NAME.USERS), {
+      //   userId: userCredential.user.uid,
+      //   role: USER_ROLES.MEMBER,
+      // });
+
+      await setDoc(doc(collection(db, COLLECTIONS_NAME.USERS), name), {
         userId: userCredential.user.uid,
         role: USER_ROLES.MEMBER,
       });
