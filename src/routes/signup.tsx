@@ -41,14 +41,10 @@ export default function Signup() {
         displayName: name,
       });
 
-      // await addDoc(collection(db, COLLECTIONS_NAME.USERS), {
-      //   userId: userCredential.user.uid,
-      //   role: USER_ROLES.MEMBER,
-      // });
-
       await setDoc(doc(collection(db, COLLECTIONS_NAME.USERS), name), {
         userId: userCredential.user.uid,
         role: USER_ROLES.MEMBER,
+        cc: false,
       });
 
       await auth.signOut();
