@@ -7,19 +7,24 @@ import {
 import { auth, db, storage } from '@/config/firebase';
 import { useForm } from 'react-hook-form';
 import Utils from './../utils/index';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { updateProfile } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import {
-  DocumentData,
-  QuerySnapshot,
   collection,
+  doc,
+  getDoc,
   getDocs,
   query,
   where,
 } from 'firebase/firestore';
-
+interface Approver {
+  userId: string;
+  name: string;
+  cc: boolean;
+  role: number;
+}
 interface ProfileInput {
   name: string;
   email: string;
@@ -31,8 +36,7 @@ export default function Profile() {
   const navigator = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [avatarUrl, setAvartarUrl] = useState(user?.photoURL);
-  const [approvers, setApprovers] =
-    useState<QuerySnapshot<DocumentData, DocumentData>>();
+  const [approvers, setApprovers] = useState<Approver[]>([]);
   const { register, handleSubmit } = useForm<ProfileInput>({
     defaultValues: {
       name: user?.displayName ?? '',
@@ -74,25 +78,35 @@ export default function Profile() {
     }
   };
 
-  const setApproverSnapshot = async () => {
-    const approverQuery = query(
-      collection(db, COLLECTIONS_NAME.USERS),
-      where('role', 'in', ['0', '1', '2']),
+  const setApproverSnapshot = useCallback(async () => {
+    const approversList: Approver[] = [];
+
+    if (!user?.displayName) return;
+
+    const currentUserSnapshot = await getDoc(
+      doc(db, COLLECTIONS_NAME.USERS, user.displayName),
     );
 
+    if (!currentUserSnapshot.exists()) return;
+
+    const approverQuery = query(
+      collection(db, COLLECTIONS_NAME.USERS),
+      where('role', '<', currentUserSnapshot.data().role),
+    );
     const approverSnapshot = await getDocs(approverQuery);
 
     approverSnapshot.forEach((doc) => {
-      console.log(doc.id);
-      console.log(doc.data());
+      const { userId, cc, role } = doc.data();
+
+      approversList.push({ userId, cc, role, name: doc.id });
     });
 
-    // setApprovers(approverSnapshot);
-  };
+    setApprovers(approversList);
+  }, [user?.displayName]);
 
   useEffect(() => {
     setApproverSnapshot();
-  }, []);
+  }, [setApproverSnapshot]);
 
   return (
     <article className="flex flex-col items-center justify-center">
@@ -150,15 +164,18 @@ export default function Profile() {
             },
           })}
         />
-        <select
+        <select // FIXME: 결재자를 선택해주세요
           required
-          value="1"
           className="h-10 rounded-lg px-3 py-2 focus:outline-none"
           {...register('approver', {
             required: true,
           })}
         >
-          {/* FIXME: OPTION */}
+          {approvers.map((approver) => (
+            <option key={approver.userId} value={approver.name}>
+              {approver.name}
+            </option>
+          ))}
         </select>
         <button className="!mt-10 rounded-lg bg-light-text-main py-3 font-semibold dark:bg-dark-text-main">
           {isLoading ? 'Loading...' : 'Edit'}
