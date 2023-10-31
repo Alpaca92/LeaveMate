@@ -20,6 +20,7 @@ const USER_ROLES = Object.freeze({
 
 const COLLECTIONS_NAME = Object.freeze({
   REQUESTS: 'requests',
+  USERS: 'users',
 });
 
 const LOCALSTORAGE_KEYS = Object.freeze({
