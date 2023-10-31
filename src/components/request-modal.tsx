@@ -47,6 +47,7 @@ export default function RequestModal({ controller }: RequestModalProps) {
     },
   });
 
+  // FIXME: Modal을 열 때 마다 query문을 실행하므로 react-query를 통해 캐싱작업 필요
   const setApproverSnapshot = async () => {
     const approverQuery = query(
       collection(db, COLLECTIONS_NAME.USERS),
