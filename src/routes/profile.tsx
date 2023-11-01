@@ -7,7 +7,7 @@ import {
 import { auth, db, storage } from '@/config/firebase';
 import { useForm } from 'react-hook-form';
 import Utils from './../utils/index';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { updateProfile } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
@@ -19,6 +19,7 @@ import {
   query,
   where,
 } from 'firebase/firestore';
+import { useQuery } from '@tanstack/react-query';
 interface Approver {
   userId: string;
   name: string;
@@ -36,7 +37,39 @@ export default function Profile() {
   const navigator = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [avatarUrl, setAvartarUrl] = useState(user?.photoURL);
-  const [approvers, setApprovers] = useState<Approver[]>([]);
+
+  const setApproverSnapshot = useCallback(async () => {
+    const approversList: Approver[] = [];
+
+    if (!user?.displayName) return;
+
+    const currentUserSnapshot = await getDoc(
+      doc(db, COLLECTIONS_NAME.USERS, user.displayName),
+    );
+
+    if (!currentUserSnapshot.exists()) return;
+
+    const approverQuery = query(
+      collection(db, COLLECTIONS_NAME.USERS),
+      where('role', '<', currentUserSnapshot.data().role),
+    );
+    const approverSnapshot = await getDocs(approverQuery);
+
+    approverSnapshot.forEach((doc) => {
+      const { userId, cc, role } = doc.data();
+
+      approversList.push({ userId, cc, role, name: doc.id });
+    });
+
+    return approversList;
+  }, [user?.displayName]);
+
+  const { data: approversList, isSuccess: approversListFetchSuccess } =
+    useQuery({
+      queryKey: ['approvers'],
+      queryFn: setApproverSnapshot,
+    });
+
   const { register, handleSubmit } = useForm<ProfileInput>({
     defaultValues: {
       name: user?.displayName ?? '',
@@ -78,35 +111,7 @@ export default function Profile() {
     }
   };
 
-  const setApproverSnapshot = useCallback(async () => {
-    const approversList: Approver[] = [];
-
-    if (!user?.displayName) return;
-
-    const currentUserSnapshot = await getDoc(
-      doc(db, COLLECTIONS_NAME.USERS, user.displayName),
-    );
-
-    if (!currentUserSnapshot.exists()) return;
-
-    const approverQuery = query(
-      collection(db, COLLECTIONS_NAME.USERS),
-      where('role', '<', currentUserSnapshot.data().role),
-    );
-    const approverSnapshot = await getDocs(approverQuery);
-
-    approverSnapshot.forEach((doc) => {
-      const { userId, cc, role } = doc.data();
-
-      approversList.push({ userId, cc, role, name: doc.id });
-    });
-
-    setApprovers(approversList);
-  }, [user?.displayName]);
-
-  useEffect(() => {
-    setApproverSnapshot();
-  }, [setApproverSnapshot]);
+  console.log(approversList);
 
   return (
     <article className="flex flex-col items-center justify-center">
@@ -172,7 +177,7 @@ export default function Profile() {
           })}
         >
           <option value="">결재자를 선택해주세요</option>
-          {approvers.map((approver) => (
+          {approversList?.map((approver) => (
             <option key={approver.userId} value={approver.name}>
               {approver.name}
             </option>
