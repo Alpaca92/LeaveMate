@@ -14,8 +14,9 @@ const PRIVATE_PATHS: readonly string[] = Object.freeze([
 
 const USER_ROLES = Object.freeze({
   MASTER: 0,
-  LEADER: 1,
-  MEMBER: 2,
+  EXECUTIVE: 1,
+  LEADER: 2,
+  MEMBER: 3,
 });
 
 const COLLECTIONS_NAME = Object.freeze({

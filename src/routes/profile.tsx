@@ -164,13 +164,14 @@ export default function Profile() {
             },
           })}
         />
-        <select // FIXME: 결재자를 선택해주세요
+        <select
           required
           className="h-10 rounded-lg px-3 py-2 focus:outline-none"
           {...register('approver', {
             required: true,
           })}
         >
+          <option value="">결재자를 선택해주세요</option>
           {approvers.map((approver) => (
             <option key={approver.userId} value={approver.name}>
               {approver.name}
