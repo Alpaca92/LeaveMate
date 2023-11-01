@@ -1,31 +1,14 @@
-import {
-  COLLECTIONS_NAME,
-  ERROR_TYPES,
-  PATH_NAME,
-  REGEX,
-} from '@/config/config';
-import { auth, db, storage } from '@/config/firebase';
+import { ERROR_TYPES, PATH_NAME, REGEX } from '@/config/config';
+import { auth, storage } from '@/config/firebase';
 import { useForm } from 'react-hook-form';
 import Utils from './../utils/index';
-import { useCallback, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { updateProfile } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-} from 'firebase/firestore';
-import { useQuery } from '@tanstack/react-query';
-interface Approver {
-  userId: string;
-  name: string;
-  cc: boolean;
-  role: number;
-}
+import RootStore from '@/stores/store';
+import { useShallow } from 'zustand/react/shallow';
+import { R } from 'node_modules/@tanstack/react-query-devtools/build/modern/devtools-c71c5f06';
 interface ProfileInput {
   name: string;
   email: string;
@@ -37,38 +20,11 @@ export default function Profile() {
   const navigator = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [avatarUrl, setAvartarUrl] = useState(user?.photoURL);
-
-  const setApproverSnapshot = useCallback(async () => {
-    const approversList: Approver[] = [];
-
-    if (!user?.displayName) return;
-
-    const currentUserSnapshot = await getDoc(
-      doc(db, COLLECTIONS_NAME.USERS, user.displayName),
-    );
-
-    if (!currentUserSnapshot.exists()) return;
-
-    const approverQuery = query(
-      collection(db, COLLECTIONS_NAME.USERS),
-      where('role', '<', currentUserSnapshot.data().role),
-    );
-    const approverSnapshot = await getDocs(approverQuery);
-
-    approverSnapshot.forEach((doc) => {
-      const { userId, cc, role } = doc.data();
-
-      approversList.push({ userId, cc, role, name: doc.id });
-    });
-
-    return approversList;
-  }, [user?.displayName]);
-
-  const { data: approversList, isSuccess: approversListFetchSuccess } =
-    useQuery({
-      queryKey: ['approvers'],
-      queryFn: setApproverSnapshot,
-    });
+  const members = RootStore(
+    useShallow((state) =>
+      state.members.filter((member) => member.name !== user?.displayName),
+    ),
+  );
 
   const { register, handleSubmit } = useForm<ProfileInput>({
     defaultValues: {
@@ -111,7 +67,9 @@ export default function Profile() {
     }
   };
 
-  console.log(approversList);
+  useEffect(() => {
+    console.log('members: ', members);
+  }, [members]);
 
   return (
     <article className="flex flex-col items-center justify-center">
@@ -177,11 +135,11 @@ export default function Profile() {
           })}
         >
           <option value="">결재자를 선택해주세요</option>
-          {approversList?.map((approver) => (
+          {/* {approversList?.map((approver) => (
             <option key={approver.userId} value={approver.name}>
               {approver.name}
             </option>
-          ))}
+          ))} */}
         </select>
         <button className="!mt-10 rounded-lg bg-light-text-main py-3 font-semibold dark:bg-dark-text-main">
           {isLoading ? 'Loading...' : 'Edit'}
