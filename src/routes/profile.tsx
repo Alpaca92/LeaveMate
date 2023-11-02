@@ -8,7 +8,6 @@ import { updateProfile } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import RootStore from '@/stores/store';
 import { useShallow } from 'zustand/react/shallow';
-import { R } from 'node_modules/@tanstack/react-query-devtools/build/modern/devtools-c71c5f06';
 interface ProfileInput {
   name: string;
   email: string;

@@ -1,13 +1,9 @@
 import { PATH_NAME, PRIVATE_PATHS } from '@/config/config';
 import { auth } from '@/config/firebase';
 import { useMemo } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
-interface RouteGuardProps {
-  children: React.ReactNode;
-}
-
-export default function RouteGuard({ children }: RouteGuardProps) {
+export default function RouteGuard() {
   const user = auth.currentUser;
   const location = useLocation();
   const hasEnteredPrivatePath = useMemo(
@@ -15,9 +11,29 @@ export default function RouteGuard({ children }: RouteGuardProps) {
     [location],
   );
 
+  let children;
+
   if (user) {
-    return hasEnteredPrivatePath ? children : <Navigate to={PATH_NAME.HOME} />;
+    children = hasEnteredPrivatePath ? (
+      <Outlet />
+    ) : (
+      <Navigate to={PATH_NAME.HOME} />
+    );
   } else {
-    return hasEnteredPrivatePath ? <Navigate to={PATH_NAME.LOGIN} /> : children;
+    children = hasEnteredPrivatePath ? (
+      <Navigate to={PATH_NAME.LOGIN} />
+    ) : (
+      <Outlet />
+    );
   }
+
+  return (
+    <main
+      className={`${
+        hasEnteredPrivatePath ? 'grid-rows-[90%_10%]' : ''
+      } grid h-screen bg-light-background-main  text-light-text-main dark:bg-dark-background-main dark:text-dark-text-main`}
+    >
+      {children}
+    </main>
+  );
 }

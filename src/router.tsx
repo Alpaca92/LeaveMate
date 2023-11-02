@@ -6,12 +6,31 @@ import Profile from '@/routes/profile';
 import Signup from '@/routes/signup';
 import Home from '@/routes/home';
 import Calendar from '@/routes/calendar';
+import RouteGuard from '@/components/route-guard';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Layout />,
+    element: <RouteGuard />,
     children: [
+      {
+        path: '/',
+        element: <Layout />,
+        children: [
+          {
+            path: PATH_NAME.HOME,
+            element: <Home />,
+          },
+          {
+            path: PATH_NAME.CALENDAR,
+            element: <Calendar />,
+          },
+          {
+            path: PATH_NAME.PROFILE,
+            element: <Profile />,
+          },
+        ],
+      },
       {
         path: PATH_NAME.LOGIN,
         element: <Login />,
@@ -19,18 +38,6 @@ const router = createBrowserRouter([
       {
         path: PATH_NAME.SIGNUP,
         element: <Signup />,
-      },
-      {
-        path: PATH_NAME.HOME,
-        element: <Home />,
-      },
-      {
-        path: PATH_NAME.CALENDAR,
-        element: <Calendar />,
-      },
-      {
-        path: PATH_NAME.PROFILE,
-        element: <Profile />,
       },
     ],
   },
