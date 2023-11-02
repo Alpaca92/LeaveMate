@@ -2,12 +2,10 @@ import { ERROR_TYPES, PATH_NAME, REGEX } from '@/config/config';
 import { auth, storage } from '@/config/firebase';
 import { useForm } from 'react-hook-form';
 import Utils from './../utils/index';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { updateProfile } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import RootStore from '@/stores/store';
-import { useShallow } from 'zustand/react/shallow';
 interface ProfileInput {
   name: string;
   email: string;
@@ -19,11 +17,6 @@ export default function Profile() {
   const navigator = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [avatarUrl, setAvartarUrl] = useState(user?.photoURL);
-  const members = RootStore(
-    useShallow((state) =>
-      state.members.filter((member) => member.name !== user?.displayName),
-    ),
-  );
 
   const { register, handleSubmit } = useForm<ProfileInput>({
     defaultValues: {
@@ -65,10 +58,6 @@ export default function Profile() {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    console.log('members: ', members);
-  }, [members]);
 
   return (
     <article className="flex flex-col items-center justify-center">
