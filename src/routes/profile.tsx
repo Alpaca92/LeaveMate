@@ -25,14 +25,13 @@ export default function Profile() {
   const navigator = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [avatarUrl, setAvartarUrl] = useState(user?.photoURL);
-  const [currentUser] = RootStore(
-    useShallow((state) =>
-      state.members.filter((member) => member.name === user?.displayName),
-    ),
-  );
+  const currentUser = RootStore(useShallow((state) => state.currentUser));
   const members = RootStore(
     useShallow((state) =>
-      state.members.filter((member) => member.name !== user?.displayName),
+      state.members.filter(
+        (member) =>
+          member.name !== user?.displayName && member.role < currentUser.role,
+      ),
     ),
   );
 

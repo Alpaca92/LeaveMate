@@ -45,6 +45,7 @@ export default function Signup() {
         doc(collection(db, COLLECTIONS_NAME.USERS), userCredential.user.uid),
         {
           name,
+          email,
           role: USER_ROLES.MEMBER,
           cc: false,
         },

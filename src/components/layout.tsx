@@ -11,10 +11,12 @@ export default function Layout() {
     [location],
   );
   const setMembers = RootStore((state) => state.setMembers);
+  const setCurrentUser = RootStore((state) => state.setCurrentUser);
 
   useEffect(() => {
     setMembers();
-  }, [setMembers]);
+    setCurrentUser();
+  }, [setMembers, setCurrentUser]);
 
   return (
     <>

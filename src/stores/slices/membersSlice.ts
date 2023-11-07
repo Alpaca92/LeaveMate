@@ -2,17 +2,9 @@ import { StateCreator } from 'zustand';
 import { db } from '@/config/firebase';
 import { collection, getDocs, query } from 'firebase/firestore';
 import { COLLECTIONS_NAME } from '@/config/config';
-
-interface Member {
-  userId: string;
-  name: string;
-  cc: boolean;
-  role: number;
-  approver?: string;
-}
-
+import { User } from '@/stores/types';
 interface MembersSlice {
-  members: Member[];
+  members: User[];
   setMembers: () => void;
 }
 
@@ -20,15 +12,15 @@ const membersSlice: StateCreator<MembersSlice> = (set) => ({
   members: [],
   setMembers: async () => {
     try {
-      const membersList: Member[] = [];
+      const membersList: User[] = [];
 
       const memberQuery = query(collection(db, COLLECTIONS_NAME.USERS));
       const membersSnapshot = await getDocs(memberQuery);
 
       membersSnapshot.forEach((doc) => {
-        const { userId, cc, role, approver } = doc.data();
+        const { name, cc, role, approver } = doc.data();
 
-        membersList.push({ userId, cc, role, approver, name: doc.id });
+        membersList.push({ name, cc, role, approver, userId: doc.id });
       });
 
       set({ members: membersList });
