@@ -1,11 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Modal from '@/components/modal';
 import RequestModal from '@/components/request-modal';
-import RootStore from '@/stores/store';
 
 export default function Home() {
   const [isShow, setIsShow] = useState<boolean>(false);
-  const { members, setMembers } = RootStore();
 
   const onClick = () => {
     setIsShow(true);
@@ -14,10 +12,6 @@ export default function Home() {
   const onClose = () => {
     setIsShow(false);
   };
-
-  useEffect(() => {
-    setMembers();
-  }, [setMembers]);
 
   return (
     <article className="relative">

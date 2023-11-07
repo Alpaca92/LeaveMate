@@ -18,18 +18,22 @@ interface MembersSlice {
 const membersSlice: StateCreator<MembersSlice> = (set) => ({
   members: [],
   setMembers: async () => {
-    const membersList: Member[] = [];
+    try {
+      const membersList: Member[] = [];
 
-    const approverQuery = query(collection(db, COLLECTIONS_NAME.USERS));
-    const approverSnapshot = await getDocs(approverQuery);
+      const memberQuery = query(collection(db, COLLECTIONS_NAME.USERS));
+      const membersSnapshot = await getDocs(memberQuery);
 
-    approverSnapshot.forEach((doc) => {
-      const { userId, cc, role } = doc.data();
+      membersSnapshot.forEach((doc) => {
+        const { userId, cc, role } = doc.data();
 
-      membersList.push({ userId, cc, role, name: doc.id });
-    });
+        membersList.push({ userId, cc, role, name: doc.id });
+      });
 
-    set({ members: membersList });
+      set({ members: membersList });
+    } catch (error) {
+      console.error(error);
+    }
   },
 });
 
