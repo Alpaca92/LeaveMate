@@ -7,7 +7,7 @@ import {
 import { auth, db, storage } from '@/config/firebase';
 import { useForm } from 'react-hook-form';
 import Utils from './../utils/index';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { updateProfile } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
@@ -62,20 +62,6 @@ export default function Profile() {
     }
   };
 
-  const onLogout = async (event: React.MouseEvent<HTMLElement>) => {
-    event.preventDefault();
-
-    try {
-      setIsLoading(true);
-      await auth.signOut();
-      navigator(PATH_NAME.LOGIN);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const onProfileUpdate = async (data: ProfileInput) => {
     const { approver, email, name } = data;
 
@@ -85,7 +71,7 @@ export default function Profile() {
       setIsLoading(true);
 
       await updateDoc(
-        doc(collection(db, COLLECTIONS_NAME.USERS), currentUser.name),
+        doc(collection(db, COLLECTIONS_NAME.USERS), currentUser.name), // FIXME: change arg name to uid
         {
           name,
           email,
@@ -99,9 +85,19 @@ export default function Profile() {
     }
   };
 
-  useEffect(() => {
-    console.log(currentUser);
-  }, [currentUser]);
+  const onLogout = async (event: React.MouseEvent<HTMLElement>) => {
+    event.preventDefault();
+
+    try {
+      setIsLoading(true);
+      await auth.signOut();
+      navigator(PATH_NAME.LOGIN);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <article className="flex flex-col items-center justify-center">
