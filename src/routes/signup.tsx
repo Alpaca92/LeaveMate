@@ -41,11 +41,14 @@ export default function Signup() {
         displayName: name,
       });
 
-      await setDoc(doc(collection(db, COLLECTIONS_NAME.USERS), name), {
-        userId: userCredential.user.uid,
-        role: USER_ROLES.MEMBER,
-        cc: false,
-      });
+      await setDoc(
+        doc(collection(db, COLLECTIONS_NAME.USERS), userCredential.user.uid),
+        {
+          name,
+          role: USER_ROLES.MEMBER,
+          cc: false,
+        },
+      );
 
       await auth.signOut();
 
