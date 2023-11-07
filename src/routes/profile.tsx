@@ -1,11 +1,19 @@
-import { ERROR_TYPES, PATH_NAME, REGEX } from '@/config/config';
-import { auth, storage } from '@/config/firebase';
+import {
+  COLLECTIONS_NAME,
+  ERROR_TYPES,
+  PATH_NAME,
+  REGEX,
+} from '@/config/config';
+import { auth, db, storage } from '@/config/firebase';
 import { useForm } from 'react-hook-form';
 import Utils from './../utils/index';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { updateProfile } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
+import { useShallow } from 'zustand/react/shallow';
+import RootStore from '@/stores/store';
+import { collection, doc, updateDoc } from 'firebase/firestore';
 interface ProfileInput {
   name: string;
   email: string;
@@ -17,12 +25,22 @@ export default function Profile() {
   const navigator = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [avatarUrl, setAvartarUrl] = useState(user?.photoURL);
+  const [currentUser] = RootStore(
+    useShallow((state) =>
+      state.members.filter((member) => member.name === user?.displayName),
+    ),
+  );
+  const members = RootStore(
+    useShallow((state) =>
+      state.members.filter((member) => member.name !== user?.displayName),
+    ),
+  );
 
   const { register, handleSubmit } = useForm<ProfileInput>({
     defaultValues: {
       name: user?.displayName ?? '',
       email: user?.email ?? '',
-      approver: '', // FIXME: 결재자를 한 번 선택하면 이를 기억함, 또한 profile에서 결재자를 선택하면 기안을 올릴 때 결재자가 자동으로 선택
+      approver: currentUser?.approver ?? '', // FIXME: find how can i set default value on select tag
     },
   });
 
@@ -59,6 +77,33 @@ export default function Profile() {
     }
   };
 
+  const onProfileUpdate = async (data: ProfileInput) => {
+    const { approver, email, name } = data;
+
+    if (!approver || !email || !name) return;
+
+    try {
+      setIsLoading(true);
+
+      await updateDoc(
+        doc(collection(db, COLLECTIONS_NAME.USERS), currentUser.name),
+        {
+          name,
+          email,
+          approver,
+        },
+      );
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    console.log(currentUser);
+  }, [currentUser]);
+
   return (
     <article className="flex flex-col items-center justify-center">
       <label
@@ -89,7 +134,10 @@ export default function Profile() {
         accept="image/*"
         onChange={onAvatarUpdate}
       />
-      <form className="mt-10 flex w-4/5 flex-col space-y-4 text-light-text-main">
+      <form
+        className="mt-10 flex w-4/5 flex-col space-y-4 text-light-text-main"
+        onSubmit={handleSubmit(onProfileUpdate)}
+      >
         <input
           className="rounded-lg px-3 py-2 focus:outline-none"
           required
@@ -123,14 +171,14 @@ export default function Profile() {
           })}
         >
           <option value="">결재자를 선택해주세요</option>
-          {/* {approversList?.map((approver) => (
-            <option key={approver.userId} value={approver.name}>
-              {approver.name}
+          {members.map((member) => (
+            <option key={member.userId} value={member.name}>
+              {member.name}
             </option>
-          ))} */}
+          ))}
         </select>
         <button className="!mt-10 rounded-lg bg-light-text-main py-3 font-semibold dark:bg-dark-text-main">
-          {isLoading ? 'Loading...' : 'Edit'}
+          {isLoading ? 'Loading...' : 'Update'}
         </button>
       </form>
       <button

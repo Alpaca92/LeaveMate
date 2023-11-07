@@ -8,6 +8,7 @@ interface Member {
   name: string;
   cc: boolean;
   role: number;
+  approver?: string;
 }
 
 interface MembersSlice {
@@ -25,9 +26,9 @@ const membersSlice: StateCreator<MembersSlice> = (set) => ({
       const membersSnapshot = await getDocs(memberQuery);
 
       membersSnapshot.forEach((doc) => {
-        const { userId, cc, role } = doc.data();
+        const { userId, cc, role, approver } = doc.data();
 
-        membersList.push({ userId, cc, role, name: doc.id });
+        membersList.push({ userId, cc, role, approver, name: doc.id });
       });
 
       set({ members: membersList });
