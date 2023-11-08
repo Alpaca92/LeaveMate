@@ -1,14 +1,13 @@
 import { ERROR_MESSAGES, PATH_NAME, REGEX } from '@/config/config';
 import { auth } from '@/config/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import Utils from './../utils/index';
 import { FirebaseError } from 'firebase/app';
-import { Theme, ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/ReactToastify.min.css';
 import type { EmailAndPassword } from '@/types';
+import UseErrorToast from '@/hooks/useErrorToast';
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
@@ -19,13 +18,7 @@ export default function Login() {
     setError,
   } = useForm<EmailAndPassword>();
   const navigator = useNavigate();
-
-  const notify = (message: string) => {
-    toast.error(message, {
-      position: toast.POSITION.TOP_RIGHT,
-      theme: Utils.getTheme() as Theme,
-    });
-  };
+  const [notifies, Toast] = UseErrorToast({ errors });
 
   const onSubmit = async (data: EmailAndPassword) => {
     const { email, password } = data;
@@ -44,12 +37,16 @@ export default function Login() {
           ERROR_MESSAGES.FIREBASE[error.code],
         );
         setError('root', { type: 'firebase', message });
-        notify(message);
       }
     } finally {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    notifies();
+    console.log(errors);
+  }, [errors, notifies]);
 
   return (
     <article className="flex w-full flex-col items-center justify-center">
@@ -102,7 +99,7 @@ export default function Login() {
           Create an account
         </Link>
       </span>
-      <ToastContainer />
+      <Toast />
     </article>
   );
 }
