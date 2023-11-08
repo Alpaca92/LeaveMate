@@ -1,4 +1,5 @@
 import BottomNavigation from '@/components/bottom-navigation';
+import Loading from '@/components/loading';
 import { PRIVATE_PATHS } from '@/config/config';
 import RootStore from '@/stores/store';
 import Utils from '@/utils';
@@ -41,9 +42,11 @@ export default function Layout() {
     setCurrentUser,
   ]);
 
+  if (!membersSuccess || !currentUserSuccess) return <Loading />;
+
   return (
     <>
-      <Outlet />
+      {<Outlet />}
       {hasEnteredPrivatePath ? <BottomNavigation /> : null}
     </>
   );
