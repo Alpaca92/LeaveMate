@@ -8,15 +8,11 @@ import Utils from './../utils/index';
 import { FirebaseError } from 'firebase/app';
 import { Theme, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/ReactToastify.min.css';
-
-interface SignupInput {
-  email: string;
-  password: string;
-}
+import type { EmailAndPassword } from '@/types';
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
-  const { register, handleSubmit } = useForm<SignupInput>();
+  const { register, handleSubmit } = useForm<EmailAndPassword>();
   const navigator = useNavigate();
 
   const notify = (message: string) => {
@@ -26,7 +22,7 @@ export default function Login() {
     });
   };
 
-  const onSubmit = async (data: SignupInput) => {
+  const onSubmit = async (data: EmailAndPassword) => {
     const { email, password } = data;
 
     if (!email || !password) return;

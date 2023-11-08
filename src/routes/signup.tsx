@@ -6,17 +6,16 @@ import {
   USER_ROLES,
 } from '@/config/config';
 import { auth, db } from '@/config/firebase';
+import type { EmailAndPassword } from '@/types';
 import Utils from '@/utils';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { addDoc, collection, doc, setDoc } from 'firebase/firestore';
+import { collection, doc, setDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 
-interface SignupInput {
+interface SignupInput extends EmailAndPassword {
   name: string;
-  email: string;
-  password: string;
 }
 
 export default function Signup() {
