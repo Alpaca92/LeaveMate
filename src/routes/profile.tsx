@@ -16,7 +16,6 @@ import RootStore from '@/stores/store';
 import { collection, doc, updateDoc } from 'firebase/firestore';
 import { FirebaseError } from 'firebase/app';
 import { Theme, ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/ReactToastify.min.css';
 interface ProfileInput {
   name: string;
   email: string;

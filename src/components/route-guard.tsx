@@ -2,6 +2,7 @@ import { PATH_NAME, PRIVATE_PATHS } from '@/config/config';
 import { auth } from '@/config/firebase';
 import { useMemo } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import 'react-toastify/ReactToastify.min.css';
 
 export default function RouteGuard() {
   const user = auth.currentUser;
