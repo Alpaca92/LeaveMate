@@ -24,9 +24,7 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         {isLoading ? (
-          <main className="flex h-screen items-center justify-center bg-light-background-main text-light-text-main dark:bg-dark-background-main dark:text-dark-text-main">
-            <Loading />
-          </main>
+          <main className="h-screen bg-light-background-main dark:bg-dark-background-main"></main>
         ) : (
           <RouterProvider router={router} />
         )}
