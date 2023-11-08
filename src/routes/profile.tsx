@@ -14,6 +14,9 @@ import { useNavigate } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
 import RootStore from '@/stores/store';
 import { collection, doc, updateDoc } from 'firebase/firestore';
+import { FirebaseError } from 'firebase/app';
+import { Theme, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/ReactToastify.min.css';
 interface ProfileInput {
   name: string;
   email: string;
@@ -42,6 +45,13 @@ export default function Profile() {
       approver: currentUser.approver ?? '',
     },
   });
+
+  const notify = (message: string) => {
+    toast.error(message, {
+      position: toast.POSITION.TOP_RIGHT,
+      theme: Utils.getTheme() as Theme,
+    });
+  };
 
   const onAvatarUpdate = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!user) return;
@@ -80,6 +90,11 @@ export default function Profile() {
       );
     } catch (error) {
       console.error(error);
+
+      if (error instanceof FirebaseError) {
+        const message = Utils.getErrorMessage(ERROR_TYPES.FIREBASE[error.code]);
+        notify(message);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -190,6 +205,7 @@ export default function Profile() {
       >
         Logout
       </button>
+      <ToastContainer />
     </article>
   );
 }
