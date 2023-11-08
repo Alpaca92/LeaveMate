@@ -1,4 +1,10 @@
-const PATH_NAME: { [key: string]: string } = Object.freeze({
+type Path = '/login' | '/signup' | '/' | '/calendar' | '/profile';
+
+interface Pathname {
+  [key: string]: Path;
+}
+
+const PATH_NAME: Pathname = Object.freeze({
   LOGIN: '/login',
   SIGNUP: '/signup',
   HOME: '/',
@@ -41,14 +47,31 @@ const REGEX = Object.freeze({
   EMAIL: /^[A-Za-z0-9._%+-]+@t-win\.kr$/,
 });
 
-const ERROR_TYPES: {
-  [key: string]: {
+interface ErrorMessages {
+  COMMON: {
+    NAME_LENGTH_VALIDATION: string;
+    APPROVER_VALIDATION: string;
+    DATE_VALIDATION: string;
+    EMAIL_VALIDATION: string;
+    PASSWORD_VALIDATION: string;
+    REQUEST_REASON_VALIDATION: string;
+    MERIDIEM_VALIDATION: string;
+  };
+  FIREBASE: {
+    'auth/invalid-login-credentials': string;
     [key: string]: string;
   };
-} = Object.freeze({
+}
+
+const ERROR_MESSAGES: ErrorMessages = Object.freeze({
   COMMON: Object.freeze({
+    NAME_LENGTH_VALIDATION: 'The name must be at least 2 characters long.',
+    APPROVER_VALIDATION: 'Please choose an approver.',
+    DATE_VALIDATION: 'Please choose a date.',
     EMAIL_VALIDATION: 'Only company email addresses (*@t-win.kr) are allowed.',
     PASSWORD_VALIDATION: 'Passwords must be at least 6 characters long.',
+    REQUEST_REASON_VALIDATION: 'Please provide a reason for the leave.',
+    MERIDIEM_VALIDATION: 'Please select either AM or PM.',
   }),
   FIREBASE: Object.freeze({
     'auth/invalid-login-credentials':
@@ -56,6 +79,7 @@ const ERROR_TYPES: {
   }),
 });
 
+export type { Path };
 export {
   PATH_NAME,
   PRIVATE_PATHS,
@@ -65,5 +89,5 @@ export {
   PORTAL_KEYS,
   THEMES,
   REGEX,
-  ERROR_TYPES,
+  ERROR_MESSAGES,
 };

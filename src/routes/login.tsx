@@ -1,4 +1,4 @@
-import { ERROR_TYPES, PATH_NAME, REGEX } from '@/config/config';
+import { ERROR_MESSAGES, PATH_NAME, REGEX } from '@/config/config';
 import { auth } from '@/config/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useState } from 'react';
@@ -12,7 +12,12 @@ import type { EmailAndPassword } from '@/types';
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
-  const { register, handleSubmit } = useForm<EmailAndPassword>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError,
+  } = useForm<EmailAndPassword>();
   const navigator = useNavigate();
 
   const notify = (message: string) => {
@@ -35,7 +40,10 @@ export default function Login() {
       console.error(error);
 
       if (error instanceof FirebaseError) {
-        const message = Utils.getErrorMessage(ERROR_TYPES.FIREBASE[error.code]);
+        const message = Utils.getErrorMessage(
+          ERROR_MESSAGES.FIREBASE[error.code],
+        );
+        setError('root', { type: 'firebase', message });
         notify(message);
       }
     } finally {
@@ -52,7 +60,6 @@ export default function Login() {
       >
         <input
           className="rounded-lg px-3 py-2 focus:outline-none"
-          required
           type="email"
           placeholder="exam@t-win.kr"
           {...register('email', {
@@ -60,14 +67,13 @@ export default function Login() {
             pattern: {
               value: REGEX.EMAIL,
               message: Utils.getErrorMessage(
-                ERROR_TYPES.COMMON.EMAIL_VALIDATION,
+                ERROR_MESSAGES.COMMON.EMAIL_VALIDATION,
               ),
             },
           })}
         />
         <input
           className="rounded-lg px-3 py-2 focus:outline-none"
-          required
           type="password"
           placeholder="password"
           {...register('password', {
@@ -75,7 +81,7 @@ export default function Login() {
             minLength: {
               value: 6,
               message: Utils.getErrorMessage(
-                ERROR_TYPES.COMMON.PASSWORD_VALIDATION,
+                ERROR_MESSAGES.COMMON.PASSWORD_VALIDATION,
               ),
             },
           })}

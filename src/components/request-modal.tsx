@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { useController, useForm } from 'react-hook-form';
 import { addDoc, collection } from 'firebase/firestore';
 import { auth, db } from '@/config/firebase';
-import { COLLECTIONS_NAME } from '@/config/config';
+import { COLLECTIONS_NAME, ERROR_MESSAGES } from '@/config/config';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.min.css';
+import Utils from '@/utils';
 
 interface RequestModalProps {
   controller: React.Dispatch<React.SetStateAction<boolean>>;
@@ -22,7 +23,12 @@ export default function RequestModal({ controller }: RequestModalProps) {
   const user = auth.currentUser;
   const DATE_NOW = new Date(Date.now());
   const [isLoading, setIsLoading] = useState(false);
-  const { register, handleSubmit, control } = useForm<RequestInput>({
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<RequestInput>({
     defaultValues: {
       reason: '일신상의 사유',
       startMeridiem: 'am',
@@ -34,7 +40,10 @@ export default function RequestModal({ controller }: RequestModalProps) {
     defaultValue: DATE_NOW,
     control,
     rules: {
-      required: true,
+      required: {
+        value: true,
+        message: Utils.getErrorMessage(ERROR_MESSAGES.COMMON.DATE_VALIDATION),
+      },
     },
   });
   const { field: endField } = useController({
@@ -42,7 +51,10 @@ export default function RequestModal({ controller }: RequestModalProps) {
     defaultValue: DATE_NOW,
     control,
     rules: {
-      required: true,
+      required: {
+        value: true,
+        message: Utils.getErrorMessage(ERROR_MESSAGES.COMMON.DATE_VALIDATION),
+      },
     },
   });
 
@@ -101,12 +113,16 @@ export default function RequestModal({ controller }: RequestModalProps) {
       <form className="mt-3 flex flex-col" onSubmit={handleSubmit(onSubmit)}>
         <label htmlFor="reason">사유</label>
         <textarea
-          required
           id="reason"
           rows={3}
           className="mt-1 w-full resize-none rounded-lg px-3 py-2 text-light-text-main focus:outline-none"
           {...register('reason', {
-            required: true,
+            required: {
+              value: true,
+              message: Utils.getErrorMessage(
+                ERROR_MESSAGES.COMMON.REQUEST_REASON_VALIDATION,
+              ),
+            },
           })}
         />
         <label htmlFor="start-date" className="mt-1">
@@ -123,10 +139,14 @@ export default function RequestModal({ controller }: RequestModalProps) {
             name={startField.name}
           />
           <select
-            required
             className="rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
             {...register('startMeridiem', {
-              required: true,
+              required: {
+                value: true,
+                message: Utils.getErrorMessage(
+                  ERROR_MESSAGES.COMMON.MERIDIEM_VALIDATION,
+                ),
+              },
             })}
           >
             <option value="am">오전</option>
@@ -147,10 +167,14 @@ export default function RequestModal({ controller }: RequestModalProps) {
             name={endField.name}
           />
           <select
-            required
             className="rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
             {...register('endMeridiem', {
-              required: true,
+              required: {
+                value: true,
+                message: Utils.getErrorMessage(
+                  ERROR_MESSAGES.COMMON.MERIDIEM_VALIDATION,
+                ),
+              },
             })}
           >
             <option value="am">오전</option>

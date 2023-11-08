@@ -1,6 +1,6 @@
 import {
   COLLECTIONS_NAME,
-  ERROR_TYPES,
+  ERROR_MESSAGES,
   PATH_NAME,
   REGEX,
 } from '@/config/config';
@@ -38,7 +38,12 @@ export default function Profile() {
     ),
   );
 
-  const { register, handleSubmit, setValue } = useForm<ProfileInput>({
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<ProfileInput>({
     defaultValues: {
       name: user?.displayName ?? '',
       email: user?.email ?? '',
@@ -92,7 +97,9 @@ export default function Profile() {
       console.error(error);
 
       if (error instanceof FirebaseError) {
-        const message = Utils.getErrorMessage(ERROR_TYPES.FIREBASE[error.code]);
+        const message = Utils.getErrorMessage(
+          ERROR_MESSAGES.FIREBASE[error.code],
+        );
         notify(message);
       }
     } finally {
@@ -118,8 +125,6 @@ export default function Profile() {
     if (currentUser.approver !== undefined) {
       setValue('approver', currentUser.approver ?? '');
     }
-
-    console.log(currentUser.approver);
   }, [setValue, currentUser.approver]);
 
   return (
@@ -158,17 +163,20 @@ export default function Profile() {
       >
         <input
           className="rounded-lg px-3 py-2 focus:outline-none"
-          required
           placeholder="이름"
           type="text"
           {...register('name', {
             required: true,
-            minLength: 2,
+            minLength: {
+              value: 2,
+              message: Utils.getErrorMessage(
+                ERROR_MESSAGES.COMMON.NAME_LENGTH_VALIDATION,
+              ),
+            },
           })}
         />
         <input
           className="rounded-lg px-3 py-2 focus:outline-none"
-          required
           placeholder="이메일"
           type="email"
           {...register('email', {
@@ -176,16 +184,20 @@ export default function Profile() {
             pattern: {
               value: REGEX.EMAIL,
               message: Utils.getErrorMessage(
-                ERROR_TYPES.COMMON.EMAIL_VALIDATION,
+                ERROR_MESSAGES.COMMON.EMAIL_VALIDATION,
               ),
             },
           })}
         />
         <select
-          required
           className="h-10 rounded-lg px-3 py-2 focus:outline-none"
           {...register('approver', {
-            required: true,
+            required: {
+              value: true,
+              message: Utils.getErrorMessage(
+                ERROR_MESSAGES.COMMON.APPROVER_VALIDATION,
+              ),
+            },
           })}
         >
           <option value="">결재자를 선택해주세요</option>

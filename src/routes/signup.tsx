@@ -1,6 +1,6 @@
 import {
   COLLECTIONS_NAME,
-  ERROR_TYPES,
+  ERROR_MESSAGES,
   PATH_NAME,
   REGEX,
   USER_ROLES,
@@ -10,7 +10,7 @@ import type { EmailAndPassword } from '@/types';
 import Utils from '@/utils';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { collection, doc, setDoc } from 'firebase/firestore';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -20,7 +20,11 @@ interface SignupInput extends EmailAndPassword {
 
 export default function Signup() {
   const [isLoading, setIsLoading] = useState(false);
-  const { register, handleSubmit } = useForm<SignupInput>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignupInput>();
   const navigator = useNavigate();
 
   const onSubmit = async (data: SignupInput) => {
@@ -69,17 +73,20 @@ export default function Signup() {
       >
         <input
           className="rounded-lg px-4 py-2 focus:outline-none"
-          required
           type="text"
           placeholder="성이름"
           {...register('name', {
             required: true,
-            minLength: 2,
+            minLength: {
+              value: 2,
+              message: Utils.getErrorMessage(
+                ERROR_MESSAGES.COMMON.NAME_LENGTH_VALIDATION,
+              ),
+            },
           })}
         />
         <input
           className="rounded-lg px-3 py-2 focus:outline-none"
-          required
           type="email"
           placeholder="exam@t-win.kr"
           {...register('email', {
@@ -87,14 +94,13 @@ export default function Signup() {
             pattern: {
               value: REGEX.EMAIL,
               message: Utils.getErrorMessage(
-                ERROR_TYPES.COMMON.EMAIL_VALIDATION,
+                ERROR_MESSAGES.COMMON.EMAIL_VALIDATION,
               ),
             },
           })}
         />
         <input
           className="rounded-lg px-3 py-2 focus:outline-none"
-          required
           type="password"
           placeholder="password"
           {...register('password', {
@@ -102,7 +108,7 @@ export default function Signup() {
             minLength: {
               value: 6,
               message: Utils.getErrorMessage(
-                ERROR_TYPES.COMMON.PASSWORD_VALIDATION,
+                ERROR_MESSAGES.COMMON.PASSWORD_VALIDATION,
               ),
             },
           })}
