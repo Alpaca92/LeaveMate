@@ -59,6 +59,7 @@ interface ErrorMessages {
   };
   FIREBASE: {
     'auth/invalid-login-credentials': string;
+    'auth/too-many-requests': string;
     [key: string]: string;
   };
 }
@@ -76,6 +77,8 @@ const ERROR_MESSAGES: ErrorMessages = Object.freeze({
   FIREBASE: Object.freeze({
     'auth/invalid-login-credentials':
       'The email address or password is incorrect.',
+    'auth/too-many-requests':
+      'The server is temporarily unavailable. Please try again later.',
   }),
 });
 
