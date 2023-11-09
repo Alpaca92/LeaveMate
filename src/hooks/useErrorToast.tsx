@@ -13,32 +13,34 @@ interface UseErrorToastProps {
 }
 
 type Notify = (message: string) => void;
-
-export default function UseErrorToast({
-  errors,
-}: UseErrorToastProps): [
+type UseErrorToastResult = [
   () => void,
   React.ForwardRefExoticComponent<
     ToastContainerProps & React.RefAttributes<HTMLDivElement>
   >,
-] {
-  const notify: Notify = useCallback((message) => {
+];
+
+export default function UseErrorToast({
+  errors,
+}: UseErrorToastProps): UseErrorToastResult {
+  console.log('useErrorToast is running !', errors);
+
+  const notify: Notify = (message) => {
     toast.error(message, {
       position: toast.POSITION.TOP_RIGHT,
       theme: Utils.getTheme() as Theme,
     });
-  }, []);
+  };
 
-  const notifies = useCallback(() => {
+  const notifies = () => {
     for (const key in errors) {
       const message = errors[key]?.message;
 
       console.log('inside custom hooks:', message);
 
-      if (message !== undefined)
-        notify(Utils.getErrorMessage(message.toString()));
+      if (message !== undefined) notify(message.toString());
     }
-  }, [errors, notify]);
+  };
 
   return [notifies, ToastContainer];
 }

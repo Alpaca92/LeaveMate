@@ -1,7 +1,7 @@
 import { ERROR_MESSAGES, PATH_NAME, REGEX } from '@/config/config';
 import { auth } from '@/config/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import Utils from './../utils/index';
@@ -14,11 +14,11 @@ export default function Login() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid, isSubmitSuccessful },
     setError,
   } = useForm<EmailAndPassword>();
   const navigator = useNavigate();
-  const [notifies, Toast] = UseErrorToast({ errors });
+  const [notifies, Toast] = useMemo(() => UseErrorToast({ errors }), [errors]);
 
   const onSubmit = async (data: EmailAndPassword) => {
     const { email, password } = data;
@@ -30,8 +30,6 @@ export default function Login() {
       await signInWithEmailAndPassword(auth, email, password);
       navigator(PATH_NAME.HOME);
     } catch (error) {
-      console.error(error);
-
       if (error instanceof FirebaseError) {
         const message = Utils.getErrorMessage(
           ERROR_MESSAGES.FIREBASE[error.code],
@@ -43,10 +41,12 @@ export default function Login() {
     }
   };
 
+  // FIXME: setError 후 정상적으로 error message출력하지 않음
   useEffect(() => {
     notifies();
-    console.log(errors);
-  }, [errors, notifies]);
+  }, [notifies, errors]);
+
+  console.log(errors);
 
   return (
     <article className="flex w-full flex-col items-center justify-center">
@@ -99,6 +99,7 @@ export default function Login() {
           Create an account
         </Link>
       </span>
+      {errors && errors.root?.message}
       <Toast />
     </article>
   );
