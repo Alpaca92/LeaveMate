@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useController, useForm } from 'react-hook-form';
 import { addDoc, collection } from 'firebase/firestore';
 import { auth, db } from '@/config/firebase';
@@ -6,6 +6,8 @@ import { COLLECTIONS_NAME, ERROR_MESSAGES } from '@/config/config';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.min.css';
 import Utils from '@/utils';
+import RootStore from '@/stores/store';
+import { useShallow } from 'zustand/react/shallow';
 
 interface RequestModalProps {
   controller: React.Dispatch<React.SetStateAction<boolean>>;
@@ -17,22 +19,34 @@ interface RequestInput {
   startMeridiem: string;
   endDate: Date;
   endMeridiem: string;
+  approver: string;
 }
 
 export default function RequestModal({ controller }: RequestModalProps) {
   const user = auth.currentUser;
+  const currentUser = RootStore(useShallow((state) => state.currentUser));
+  const members = RootStore(
+    useShallow((state) =>
+      state.members.filter(
+        (member) =>
+          member.name !== user?.displayName && member.role < currentUser.role,
+      ),
+    ),
+  );
   const DATE_NOW = new Date(Date.now());
   const [isLoading, setIsLoading] = useState(false);
   const {
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors },
   } = useForm<RequestInput>({
     defaultValues: {
       reason: '일신상의 사유',
       startMeridiem: 'am',
       endMeridiem: 'pm',
+      approver: currentUser.approver ?? '',
     },
   });
   const { field: startField } = useController({
@@ -107,15 +121,24 @@ export default function RequestModal({ controller }: RequestModalProps) {
     }
   };
 
+  useEffect(() => {
+    if (currentUser.approver !== undefined) {
+      setValue('approver', currentUser.approver ?? '');
+    }
+  }, [setValue, currentUser.approver]);
+
   return (
     <>
       <h1 className="text-xl font-extrabold">휴가 신청</h1>
-      <form className="mt-3 flex flex-col" onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className="mt-3 flex flex-col space-y-1"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <label htmlFor="reason">사유</label>
         <textarea
           id="reason"
           rows={3}
-          className="mt-1 w-full resize-none rounded-lg px-3 py-2 text-light-text-main focus:outline-none"
+          className="w-full resize-none rounded-lg px-3 py-2 text-light-text-main focus:outline-none"
           {...register('reason', {
             required: {
               value: true,
@@ -125,10 +148,8 @@ export default function RequestModal({ controller }: RequestModalProps) {
             },
           })}
         />
-        <label htmlFor="start-date" className="mt-1">
-          시작일
-        </label>
-        <div className="mt-1 flex justify-between">
+        <label htmlFor="start-date">시작일</label>
+        <div className="flex justify-between">
           <DatePicker
             id="start-date"
             className="rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
@@ -153,10 +174,8 @@ export default function RequestModal({ controller }: RequestModalProps) {
             <option value="pm">오후</option>
           </select>
         </div>
-        <label htmlFor="end-date" className="mt-1">
-          종료일
-        </label>
-        <div className="mt-1 flex justify-between">
+        <label htmlFor="end-date">종료일</label>
+        <div className="flex justify-between">
           <DatePicker
             id="end-date"
             className="rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
@@ -181,6 +200,25 @@ export default function RequestModal({ controller }: RequestModalProps) {
             <option value="pm">오후</option>
           </select>
         </div>
+        <label htmlFor="end-date">결재자</label>
+        <select
+          className="h-10 rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
+          {...register('approver', {
+            required: {
+              value: true,
+              message: Utils.getErrorMessage(
+                ERROR_MESSAGES.COMMON.APPROVER_VALIDATION,
+              ),
+            },
+          })}
+        >
+          <option value="">결재자를 선택해주세요</option>
+          {members.map((member) => (
+            <option key={member.userId} value={member.name}>
+              {member.name}
+            </option>
+          ))}
+        </select>
         <button
           disabled={isLoading}
           className="!mt-5 w-full rounded-lg bg-light-text-main py-3 font-semibold text-dark-text-main dark:bg-dark-text-main dark:text-light-text-main"
