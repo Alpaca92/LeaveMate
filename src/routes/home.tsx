@@ -76,7 +76,7 @@ export default function Home() {
       </ul>
       <RequestButton onClick={onShowModal} />
       <Modal isShow={isShow} onClose={onCloseModal}>
-        <RequestModal controller={setIsShow} />
+        <RequestModal setModalVisivility={setIsShow} />
       </Modal>
     </article>
   );
