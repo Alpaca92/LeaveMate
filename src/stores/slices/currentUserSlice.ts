@@ -4,12 +4,16 @@ import type { User } from '@/types';
 interface CurrentUserSlice {
   currentUser: User;
   setCurrentUser: (data: User) => void;
+  updateCurrentUser: <T>(data: T) => void;
 }
 
 const currentUserSlice: StateCreator<CurrentUserSlice> = (set) => ({
   currentUser: {} as User,
   setCurrentUser: (data) => {
     set({ currentUser: { ...data } });
+  },
+  updateCurrentUser: (data) => {
+    set((state) => ({ currentUser: { ...state.currentUser, ...data } }));
   },
 });
 

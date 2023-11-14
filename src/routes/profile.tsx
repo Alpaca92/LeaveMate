@@ -27,7 +27,12 @@ export default function Profile() {
   const navigator = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [avatarUrl, setAvartarUrl] = useState(user?.photoURL);
-  const currentUser = RootStore(useShallow((state) => state.currentUser));
+  const { currentUser, updateCurrentUser } = RootStore(
+    useShallow((state) => ({
+      currentUser: state.currentUser,
+      updateCurrentUser: state.updateCurrentUser,
+    })),
+  );
   const members = RootStore(
     useShallow((state) =>
       state.members.filter(
@@ -92,6 +97,8 @@ export default function Profile() {
           approver,
         },
       );
+
+      updateCurrentUser({ approver });
     } catch (error) {
       console.error(error);
 
@@ -120,7 +127,6 @@ export default function Profile() {
     }
   };
 
-  // FIXME: request / profile에서 approver를 update하면 반대 화면에서는 update가 되지 않음
   useEffect(() => {
     if (currentUser.approver !== undefined) {
       setValue('approver', currentUser.approver ?? '');

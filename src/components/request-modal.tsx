@@ -26,7 +26,12 @@ export default function RequestModal({
   setModalVisivility,
 }: RequestModalProps) {
   const user = auth.currentUser;
-  const currentUser = RootStore(useShallow((state) => state.currentUser));
+  const { currentUser, updateCurrentUser } = RootStore(
+    useShallow((state) => ({
+      currentUser: state.currentUser,
+      updateCurrentUser: state.updateCurrentUser,
+    })),
+  );
   const members = RootStore(
     useShallow((state) =>
       state.members.filter(
@@ -82,29 +87,14 @@ export default function RequestModal({
     endField.onChange(date);
   };
 
-  const onSubmit = async ({
-    reason,
-    endDate,
-    endMeridiem,
-    startDate,
-    startMeridiem,
-    approver,
-  }: RequestInput) => {
+  const onRequestSubmit = async (data: RequestInput) => {
+    const { reason, endDate, endMeridiem, startDate, startMeridiem, approver } =
+      data;
+
+    if (!Utils.hasNoEmptyValues(data)) return;
+
     try {
       setIsLoading(true);
-
-      if (
-        !user?.uid ||
-        !user?.displayName ||
-        !reason ||
-        !endDate ||
-        !endMeridiem ||
-        !startDate ||
-        !startMeridiem ||
-        !approver
-      ) {
-        return;
-      }
 
       await addDoc(collection(db, COLLECTIONS_NAME.REQUESTS), {
         userId: user?.uid,
@@ -125,6 +115,7 @@ export default function RequestModal({
         },
       );
 
+      updateCurrentUser({ approver });
       setModalVisivility(false);
     } catch (error) {
       console.error(error);
@@ -144,7 +135,7 @@ export default function RequestModal({
       <h1 className="text-xl font-extrabold">휴가 신청</h1>
       <form
         className="mt-3 flex flex-col space-y-1"
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(onRequestSubmit)}
       >
         <label htmlFor="reason">사유</label>
         <textarea
