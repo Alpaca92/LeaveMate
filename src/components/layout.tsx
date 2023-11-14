@@ -1,6 +1,6 @@
 import BottomNavigation from '@/components/bottom-navigation';
 import Loading from '@/components/loading';
-import { PRIVATE_PATHS } from '@/config/config';
+import { PRIVATE_PATHS, QUERY_KEYS } from '@/config/config';
 import RootStore from '@/stores/store';
 import Utils from '@/utils';
 import { useQuery } from '@tanstack/react-query';
@@ -17,11 +17,11 @@ export default function Layout() {
   const setCurrentUser = RootStore((state) => state.setCurrentUser);
 
   const { isSuccess: membersSuccess, data: membersData } = useQuery({
-    queryKey: ['firestore', 'members'],
+    queryKey: [QUERY_KEYS.FIRESTORE, QUERY_KEYS.MEMBERS],
     queryFn: Utils.fetchMembers,
   });
   const { isSuccess: currentUserSuccess, data: currentUserData } = useQuery({
-    queryKey: ['firestore', 'currentUser'],
+    queryKey: [QUERY_KEYS.FIRESTORE, QUERY_KEYS.CURRENT_USER],
     queryFn: Utils.fetchCurrentUser,
   });
 

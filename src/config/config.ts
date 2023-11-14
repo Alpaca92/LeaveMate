@@ -34,6 +34,12 @@ const LOCALSTORAGE_KEYS = Object.freeze({
   THEME: 'theme',
 });
 
+const QUERY_KEYS = Object.freeze({
+  FIRESTORE: 'firestore',
+  MEMBERS: 'members',
+  CURRENT_USER: 'current-user',
+});
+
 const PORTAL_KEYS = Object.freeze({
   MODAL: 'modal',
 });
@@ -89,6 +95,7 @@ export {
   USER_ROLES,
   COLLECTIONS_NAME,
   LOCALSTORAGE_KEYS,
+  QUERY_KEYS,
   PORTAL_KEYS,
   THEMES,
   REGEX,
