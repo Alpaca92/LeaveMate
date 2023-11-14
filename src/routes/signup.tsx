@@ -1,3 +1,4 @@
+import Input from '@/components/input';
 import {
   COLLECTIONS_NAME,
   ERROR_MESSAGES,
@@ -10,7 +11,7 @@ import type { EmailAndPassword } from '@/types';
 import Utils from '@/utils';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { collection, doc, setDoc } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -27,10 +28,10 @@ export default function Signup() {
   } = useForm<SignupInput>();
   const navigator = useNavigate();
 
-  const onSubmit = async (data: SignupInput) => {
+  const onSignup = async (data: SignupInput) => {
     const { name, email, password } = data;
 
-    if (!name || !email || !password) return;
+    if (!Utils.hasNoEmptyValues(data)) return;
 
     try {
       setIsLoading(true);
@@ -68,14 +69,12 @@ export default function Signup() {
     <article className="flex w-full flex-col items-center justify-center">
       <p className="text-4xl font-extrabold">Create Account</p>
       <form
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(onSignup)}
         className="mt-10 flex w-4/5 flex-col space-y-4 text-light-text-main"
       >
-        <input
-          className="rounded-lg px-4 py-2 focus:outline-none"
-          type="text"
+        <Input
           placeholder="성이름"
-          {...register('name', {
+          register={register('name', {
             required: true,
             minLength: {
               value: 2,
@@ -85,11 +84,10 @@ export default function Signup() {
             },
           })}
         />
-        <input
-          className="rounded-lg px-3 py-2 focus:outline-none"
+        <Input
           type="email"
-          placeholder="exam@t-win.kr"
-          {...register('email', {
+          placeholder="email"
+          register={register('email', {
             required: true,
             pattern: {
               value: REGEX.EMAIL,
@@ -99,11 +97,10 @@ export default function Signup() {
             },
           })}
         />
-        <input
-          className="rounded-lg px-3 py-2 focus:outline-none"
+        <Input
           type="password"
           placeholder="password"
-          {...register('password', {
+          register={register('password', {
             required: true,
             minLength: {
               value: 6,
@@ -113,6 +110,7 @@ export default function Signup() {
             },
           })}
         />
+        {/* FIXME: create button component */}
         <button
           disabled={isLoading}
           className="!mt-10 rounded-lg bg-light-text-main py-3 font-semibold dark:bg-dark-text-main"
@@ -120,6 +118,7 @@ export default function Signup() {
           {isLoading ? 'Loading...' : 'Signup'}
         </button>
       </form>
+      {/* FIXME: create guide-message component */}
       <span className="mt-3 italic text-light-text-secondary dark:text-dark-text-secondary">
         Already have an account?{' '}
         <Link

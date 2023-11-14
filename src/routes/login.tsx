@@ -9,6 +9,7 @@ import { FirebaseError } from 'firebase/app';
 import { Theme, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/ReactToastify.min.css';
 import type { EmailAndPassword } from '@/types';
+import Input from '@/components/input';
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
@@ -58,11 +59,10 @@ export default function Login() {
         onSubmit={handleSubmit(onSubmit)}
         className="mt-10 flex w-4/5 flex-col space-y-4 text-light-text-main"
       >
-        <input
-          className="rounded-lg px-3 py-2 focus:outline-none"
+        <Input
           type="email"
           placeholder="exam@t-win.kr"
-          {...register('email', {
+          register={register('email', {
             required: true,
             pattern: {
               value: REGEX.EMAIL,
@@ -72,11 +72,10 @@ export default function Login() {
             },
           })}
         />
-        <input
-          className="rounded-lg px-3 py-2 focus:outline-none"
+        <Input
           type="password"
           placeholder="password"
-          {...register('password', {
+          register={register('password', {
             required: true,
             minLength: {
               value: 6,

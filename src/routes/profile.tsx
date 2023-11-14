@@ -16,6 +16,7 @@ import RootStore from '@/stores/store';
 import { collection, doc, updateDoc } from 'firebase/firestore';
 import { FirebaseError } from 'firebase/app';
 import { Theme, ToastContainer, toast } from 'react-toastify';
+import Input from '@/components/input';
 interface ProfileInput {
   name: string;
   email: string;
@@ -167,11 +168,9 @@ export default function Profile() {
         className="mt-10 flex w-4/5 flex-col space-y-4 text-light-text-main"
         onSubmit={handleSubmit(onProfileUpdate)}
       >
-        <input
-          className="rounded-lg px-3 py-2 focus:outline-none"
+        <Input
           placeholder="이름"
-          type="text"
-          {...register('name', {
+          register={register('name', {
             required: true,
             minLength: {
               value: 2,
@@ -181,11 +180,10 @@ export default function Profile() {
             },
           })}
         />
-        <input
-          className="rounded-lg px-3 py-2 focus:outline-none"
-          placeholder="이메일"
+        <Input
           type="email"
-          {...register('email', {
+          placeholder="이메일"
+          register={register('email', {
             required: true,
             pattern: {
               value: REGEX.EMAIL,
