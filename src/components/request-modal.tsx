@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useController, useForm } from 'react-hook-form';
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '@/config/firebase';
 import { COLLECTIONS_NAME, ERROR_MESSAGES } from '@/config/config';
 import DatePicker from 'react-datepicker';
@@ -10,7 +10,7 @@ import RootStore from '@/stores/store';
 import { useShallow } from 'zustand/react/shallow';
 
 interface RequestModalProps {
-  controller: React.Dispatch<React.SetStateAction<boolean>>;
+  setModalVisivility: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface RequestInput {
@@ -22,7 +22,9 @@ interface RequestInput {
   approver: string;
 }
 
-export default function RequestModal({ controller }: RequestModalProps) {
+export default function RequestModal({
+  setModalVisivility,
+}: RequestModalProps) {
   const user = auth.currentUser;
   const currentUser = RootStore(useShallow((state) => state.currentUser));
   const members = RootStore(
@@ -86,6 +88,7 @@ export default function RequestModal({ controller }: RequestModalProps) {
     endMeridiem,
     startDate,
     startMeridiem,
+    approver,
   }: RequestInput) => {
     try {
       setIsLoading(true);
@@ -97,7 +100,8 @@ export default function RequestModal({ controller }: RequestModalProps) {
         !endDate ||
         !endMeridiem ||
         !startDate ||
-        !startMeridiem
+        !startMeridiem ||
+        !approver
       ) {
         return;
       }
@@ -111,9 +115,17 @@ export default function RequestModal({ controller }: RequestModalProps) {
         endMeridiem,
         startDate,
         startMeridiem,
+        approver,
       });
 
-      controller(false);
+      await updateDoc(
+        doc(collection(db, COLLECTIONS_NAME.USERS), currentUser.userId),
+        {
+          approver,
+        },
+      );
+
+      setModalVisivility(false);
     } catch (error) {
       console.error(error);
     } finally {
