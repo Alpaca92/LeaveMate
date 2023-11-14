@@ -79,7 +79,7 @@ export default function Profile() {
   const onProfileUpdate = async (data: ProfileInput) => {
     const { approver, email, name } = data;
 
-    if (!approver || !email || !name) return;
+    if (!Utils.hasNoEmptyValues(data)) return;
 
     try {
       setIsLoading(true);
