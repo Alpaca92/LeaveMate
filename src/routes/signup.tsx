@@ -115,7 +115,6 @@ export default function Signup() {
           {isLoading ? 'Loading...' : 'Signup'}
         </Button>
       </form>
-      {/* FIXME: create guide-message component */}
       <span className="mt-3 italic text-light-text-secondary dark:text-dark-text-secondary">
         Already have an account?{' '}
         <Link

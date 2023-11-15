@@ -1,14 +1,16 @@
-import { useEffect, useState } from 'react';
-import { useController, useForm } from 'react-hook-form';
+import 'react-datepicker/dist/react-datepicker.min.css';
+
+import { COLLECTIONS_NAME, ERROR_MESSAGES } from '@/config/config';
 import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '@/config/firebase';
-import { COLLECTIONS_NAME, ERROR_MESSAGES } from '@/config/config';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.min.css';
-import Utils from '@/utils';
-import RootStore from '@/stores/store';
-import { useShallow } from 'zustand/react/shallow';
+import { useController, useForm } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+
 import Button from '@/components/button';
+import DatePicker from 'react-datepicker';
+import RootStore from '@/stores/store';
+import Utils from '@/utils';
+import { useShallow } from 'zustand/react/shallow';
 
 interface RequestModalProps {
   setModalVisivility: React.Dispatch<React.SetStateAction<boolean>>;
@@ -179,6 +181,7 @@ export default function RequestModal({
           </select>
         </div>
         <label htmlFor="end-date">종료일</label>
+        {/* FIXME: mobile 환경에서 DatePicker와 select가 overflow되는 현상 수정: https://stackoverflow.com/a/65804356/14460912 */}
         <div className="flex justify-between">
           <DatePicker
             id="end-date"
