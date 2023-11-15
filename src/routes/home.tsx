@@ -10,13 +10,17 @@ const RequestButton = ({ onClick }: RequestModalProps) => {
   return (
     <button
       onClick={onClick}
-      className="fixed bottom-[13%] right-[5%] h-16 w-16 overflow-hidden rounded-full fill-current"
+      className="fixed bottom-[13%] right-[5%] flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-dark-background-main dark:bg-light-background-main"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        className="h-8 w-8 stroke-light-background-main stroke-2 dark:stroke-dark-background-main"
+      >
         <path
-          fillRule="evenodd"
-          d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z"
-          clipRule="evenodd"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M12 4.5v15m7.5-7.5h-15"
         />
       </svg>
     </button>
