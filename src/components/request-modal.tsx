@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 
 import Button from '@/components/button';
 import DatePicker from 'react-datepicker';
+import type { DateRange } from '@/types';
 import RootStore from '@/stores/store';
 import Utils from '@/utils';
 import { useShallow } from 'zustand/react/shallow';
@@ -16,12 +17,8 @@ interface RequestModalProps {
   setModalVisivility: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-interface RequestInput {
+interface RequestInput extends DateRange {
   reason: string;
-  startDate: Date;
-  startMeridiem: string;
-  endDate: Date;
-  endMeridiem: string;
   approver: string;
 }
 
@@ -107,18 +104,8 @@ export default function RequestModal({
         approver,
         endMeridiem,
         startMeridiem,
-        endDate: endDate.toLocaleDateString('ko-KR', {
-          year: '2-digit',
-          month: '2-digit',
-          day: '2-digit',
-          weekday: 'short',
-        }),
-        startDate: startDate.toLocaleDateString('ko-KR', {
-          year: '2-digit',
-          month: '2-digit',
-          day: '2-digit',
-          weekday: 'short',
-        }),
+        endDate,
+        startDate,
       });
 
       await updateDoc(
