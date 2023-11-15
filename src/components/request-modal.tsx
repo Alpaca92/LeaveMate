@@ -104,11 +104,21 @@ export default function RequestModal({
         username: user?.displayName,
         createdAt: Date.now(),
         reason,
-        endDate,
-        endMeridiem,
-        startDate,
-        startMeridiem,
         approver,
+        endMeridiem,
+        startMeridiem,
+        endDate: endDate.toLocaleDateString('ko-KR', {
+          year: '2-digit',
+          month: '2-digit',
+          day: '2-digit',
+          weekday: 'short',
+        }),
+        startDate: startDate.toLocaleDateString('ko-KR', {
+          year: '2-digit',
+          month: '2-digit',
+          day: '2-digit',
+          weekday: 'short',
+        }),
       });
 
       await updateDoc(
