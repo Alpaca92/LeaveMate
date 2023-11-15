@@ -8,7 +8,6 @@ import { useEffect, useState } from 'react';
 
 import Button from '@/components/button';
 import DatePicker from 'react-datepicker';
-import type { DateRange } from '@/types';
 import RootStore from '@/stores/store';
 import Utils from '@/utils';
 import { useShallow } from 'zustand/react/shallow';
@@ -16,11 +15,18 @@ import { useShallow } from 'zustand/react/shallow';
 interface RequestModalProps {
   setModalVisivility: React.Dispatch<React.SetStateAction<boolean>>;
 }
-
-interface RequestInput extends DateRange {
+interface RequestInput {
   reason: string;
+  startDate: Date;
+  startMeridiem: string;
+  endDate: Date;
+  endMeridiem: string;
   approver: string;
 }
+
+const TODAY = Date.now();
+const DATE_NOW = new Date(TODAY).setHours(0, 0, 0, 0);
+const TWELVE_HOUR_IN_MILLISECONDS = 12 * 60 * 60 * 1000;
 
 export default function RequestModal({
   setModalVisivility,
@@ -40,7 +46,6 @@ export default function RequestModal({
       ),
     ),
   );
-  const DATE_NOW = new Date(Date.now());
   const [isLoading, setIsLoading] = useState(false);
   const {
     register,
@@ -58,7 +63,7 @@ export default function RequestModal({
   });
   const { field: startField } = useController({
     name: 'startDate',
-    defaultValue: DATE_NOW,
+    defaultValue: new Date(DATE_NOW),
     control,
     rules: {
       required: {
@@ -69,7 +74,7 @@ export default function RequestModal({
   });
   const { field: endField } = useController({
     name: 'endDate',
-    defaultValue: DATE_NOW,
+    defaultValue: new Date(DATE_NOW),
     control,
     rules: {
       required: {
@@ -93,6 +98,9 @@ export default function RequestModal({
 
     if (!Utils.hasNoEmptyValues(data)) return;
 
+    // FIXME: 저장할 때 EndDate는 am 일 때 12시간 만큼, pm일 때 24시간 만큼 더해주고,
+    // startDate는 pm일 때에만 12시간 더해주도록 수정하기
+
     try {
       setIsLoading(true);
 
@@ -106,6 +114,7 @@ export default function RequestModal({
         startMeridiem,
         endDate,
         startDate,
+        confirmation: false,
       });
 
       await updateDoc(
@@ -158,7 +167,6 @@ export default function RequestModal({
             className="rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
             onChange={onStartDateChange}
             selected={startField.value}
-            startDate={startField.value}
             dateFormat="yyyy/MM/dd"
             name={startField.name}
           />
@@ -185,7 +193,6 @@ export default function RequestModal({
             className="rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
             onChange={onEndDateChange}
             selected={endField.value}
-            endDate={endField.value}
             dateFormat="yyyy/MM/dd"
             name={endField.name}
           />

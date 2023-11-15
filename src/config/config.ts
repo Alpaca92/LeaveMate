@@ -1,5 +1,4 @@
 type Path = '/login' | '/signup' | '/' | '/calendar' | '/profile';
-
 interface Pathname {
   [key: string]: Path;
 }
@@ -38,6 +37,7 @@ const QUERY_KEYS = Object.freeze({
   FIRESTORE: 'firestore',
   MEMBERS: 'members',
   CURRENT_USER: 'current-user',
+  REQUESTS: 'requests',
 });
 
 const PORTAL_KEYS = Object.freeze({

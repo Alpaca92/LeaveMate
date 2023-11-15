@@ -1,7 +1,10 @@
-import { useState } from 'react';
-import Modal from '@/components/modal';
-import RequestModal from '@/components/request-modal';
 import Button from '@/components/button';
+import Modal from '@/components/modal';
+import { QUERY_KEYS } from '@/config/config';
+import RequestModal from '@/components/request-modal';
+import Utils from '@/utils';
+import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 
 interface RequestModalProps {
   onClick: () => void;
@@ -31,6 +34,10 @@ const RequestButton = ({ onClick }: RequestModalProps) => {
 export default function Home() {
   const [isShow, setIsShow] = useState<boolean>(false);
   const [currentTapIndex, setCurrentTapIndex] = useState(0);
+  const { data } = useQuery({
+    queryKey: [QUERY_KEYS.FIRESTORE, QUERY_KEYS.REQUESTS],
+    queryFn: Utils.fetchRequests,
+  });
 
   const onShowModal = () => {
     setIsShow(true);
