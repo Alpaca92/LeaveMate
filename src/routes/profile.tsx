@@ -17,6 +17,7 @@ import { collection, doc, updateDoc } from 'firebase/firestore';
 import { FirebaseError } from 'firebase/app';
 import { Theme, ToastContainer, toast } from 'react-toastify';
 import Input from '@/components/input';
+import Button from '@/components/button';
 interface ProfileInput {
   name: string;
   email: string;
@@ -114,7 +115,7 @@ export default function Profile() {
     }
   };
 
-  const onLogout = async (event: React.MouseEvent<HTMLElement>) => {
+  const onLogout = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
     try {
@@ -211,16 +212,13 @@ export default function Profile() {
             </option>
           ))}
         </select>
-        <button className="!mt-10 rounded-lg bg-light-text-main py-3 font-semibold dark:bg-dark-text-main">
+        <Button disabled={isLoading} className="!mt-10 py-3">
           {isLoading ? 'Loading...' : 'Update'}
-        </button>
+        </Button>
       </form>
-      <button
-        onClick={onLogout}
-        className="mt-3 w-4/5 rounded-lg bg-light-text-main py-3 font-semibold text-dark-text-main dark:bg-dark-text-main dark:text-light-text-main"
-      >
+      <Button onClick={onLogout} className="mt-3 w-4/5 py-3">
         Logout
-      </button>
+      </Button>
       <ToastContainer />
     </article>
   );

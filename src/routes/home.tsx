@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Modal from '@/components/modal';
 import RequestModal from '@/components/request-modal';
+import Button from '@/components/button';
 
 interface RequestModalProps {
   onClick: () => void;
@@ -71,9 +72,9 @@ export default function Home() {
                 <span>기안자: 이름</span>
                 <span>결재자: 팀장</span>
               </div>
-              <button className="self-end rounded-xl border border-dark-background-secondary bg-dark-background-main px-3 py-1 text-dark-text-main dark:border-light-background-secondary dark:bg-light-background-main dark:text-light-text-main">
+              <Button className="self-end border border-dark-background-secondary px-3 py-1 dark:border-light-background-secondary">
                 취소
-              </button>
+              </Button>
             </div>
           </li>
         ))}

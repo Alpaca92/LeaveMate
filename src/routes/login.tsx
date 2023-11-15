@@ -10,6 +10,7 @@ import { Theme, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/ReactToastify.min.css';
 import type { EmailAndPassword } from '@/types';
 import Input from '@/components/input';
+import Button from '@/components/button';
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
@@ -85,12 +86,9 @@ export default function Login() {
             },
           })}
         />
-        <button
-          disabled={isLoading}
-          className="!mt-10 rounded-lg bg-light-text-main py-3 font-semibold dark:bg-dark-text-main"
-        >
+        <Button disabled={isLoading} className="!mt-10 py-3">
           {isLoading ? 'Loading...' : 'Login'}
-        </button>
+        </Button>
       </form>
       <span className="mt-3 italic text-light-text-secondary dark:text-dark-text-secondary">
         New to T-win?{' '}

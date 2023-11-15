@@ -1,3 +1,4 @@
+import Button from '@/components/button';
 import Input from '@/components/input';
 import {
   COLLECTIONS_NAME,
@@ -110,13 +111,9 @@ export default function Signup() {
             },
           })}
         />
-        {/* FIXME: create button component */}
-        <button
-          disabled={isLoading}
-          className="!mt-10 rounded-lg bg-light-text-main py-3 font-semibold dark:bg-dark-text-main"
-        >
+        <Button disabled={isLoading} className="!mt-10 py-3">
           {isLoading ? 'Loading...' : 'Signup'}
-        </button>
+        </Button>
       </form>
       {/* FIXME: create guide-message component */}
       <span className="mt-3 italic text-light-text-secondary dark:text-dark-text-secondary">

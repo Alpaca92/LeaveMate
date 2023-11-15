@@ -8,6 +8,7 @@ import 'react-datepicker/dist/react-datepicker.min.css';
 import Utils from '@/utils';
 import RootStore from '@/stores/store';
 import { useShallow } from 'zustand/react/shallow';
+import Button from '@/components/button';
 
 interface RequestModalProps {
   setModalVisivility: React.Dispatch<React.SetStateAction<boolean>>;
@@ -222,12 +223,9 @@ export default function RequestModal({
             </option>
           ))}
         </select>
-        <button
-          disabled={isLoading}
-          className="!mt-5 w-full rounded-lg bg-light-text-main py-3 font-semibold text-dark-text-main dark:bg-dark-text-main dark:text-light-text-main"
-        >
+        <Button disabled={isLoading} className="!mt-5 py-3">
           {isLoading ? 'Loading...' : 'Request'}
-        </button>
+        </Button>
       </form>
     </>
   );

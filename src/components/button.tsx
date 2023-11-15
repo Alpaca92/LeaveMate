@@ -1,21 +1,28 @@
 import Utils from '@/utils';
 
 interface ButtonProps {
-  disabled: boolean;
-  text: string;
+  children: React.ReactNode;
   className: string;
+  disabled?: boolean;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-export default function Button({ disabled, text, className }: ButtonProps) {
+export default function Button({
+  children,
+  disabled,
+  className,
+  onClick,
+}: ButtonProps) {
   return (
     <button
+      onClick={onClick}
       disabled={disabled}
       className={Utils.combineClassNames(
-        'rounded-lg bg-light-text-main font-semibold text-dark-text-main dark:bg-dark-text-main dark:text-light-text-main',
+        'rounded-lg bg-dark-background-main font-semibold text-dark-text-main dark:bg-light-background-main dark:text-light-text-main',
         className,
       )}
     >
-      {disabled ? 'Loading...' : text}
+      {children}
     </button>
   );
 }
