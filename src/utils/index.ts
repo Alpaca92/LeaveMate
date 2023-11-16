@@ -14,9 +14,13 @@ const setTheme = (theme: string) => {
   if (theme !== currentTheme) {
     localStorage.setItem(LOCALSTORAGE_KEYS.THEME, theme);
 
-    theme === THEMES.DARK
-      ? document.body.classList.add(THEMES.DARK)
-      : document.body.classList.remove(THEMES.DARK);
+    if (theme === THEMES.DARK) {
+      document.body.classList.add(THEMES.DARK);
+      document.body.classList.remove(THEMES.LIGHT);
+    } else {
+      document.body.classList.add(THEMES.LIGHT);
+      document.body.classList.remove(THEMES.DARK);
+    }
   }
 };
 

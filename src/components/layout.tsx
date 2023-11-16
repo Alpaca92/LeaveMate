@@ -42,7 +42,9 @@ export default function Layout() {
     if (!theme) {
       Utils.setTheme(THEMES.DARK);
     } else {
-      theme === THEMES.DARK && document.body.classList.add(THEMES.DARK);
+      theme === THEMES.DARK
+        ? document.body.classList.add(THEMES.DARK)
+        : document.body.classList.add(THEMES.LIGHT);
     }
   }, []);
 
