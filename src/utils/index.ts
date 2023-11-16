@@ -11,12 +11,8 @@ const getTheme = () => localStorage.getItem(LOCALSTORAGE_KEYS.THEME);
 const setTheme = (theme: string) => {
   const currentTheme = getTheme();
 
-  if (!currentTheme) {
-    localStorage.setItem(LOCALSTORAGE_KEYS.THEME, THEMES.DARK);
-    document.body.classList.add(THEMES.DARK);
-  } else {
-    theme !== currentTheme &&
-      localStorage.setItem(LOCALSTORAGE_KEYS.THEME, theme);
+  if (theme !== currentTheme) {
+    localStorage.setItem(LOCALSTORAGE_KEYS.THEME, theme);
 
     theme === THEMES.DARK
       ? document.body.classList.add(THEMES.DARK)
