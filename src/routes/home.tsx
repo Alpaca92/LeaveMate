@@ -48,7 +48,7 @@ export default function Home() {
   };
 
   return (
-    <article className="relative overflow-scroll px-12 py-10">
+    <article className="relative w-4/5 justify-self-center overflow-scroll py-10">
       <ul className="flex cursor-pointer space-x-3">
         {['결재대기', '결재완료'].map((text, i) => (
           <li

@@ -32,7 +32,7 @@ export default function RouteGuard() {
     <main
       className={`${
         hasEnteredPrivatePath ? 'grid-rows-[90%_10%]' : ''
-      } grid h-screen bg-light-background-main  text-light-text-main dark:bg-dark-background-main dark:text-dark-text-main`}
+      } grid h-screen bg-light-background-main text-light-text-main dark:bg-dark-background-main dark:text-dark-text-main`}
     >
       {children}
     </main>

@@ -18,6 +18,7 @@ import { FirebaseError } from 'firebase/app';
 import { Theme, ToastContainer, toast } from 'react-toastify';
 import Input from '@/components/input';
 import Button from '@/components/button';
+import ThemeSwitch from '@/components/theme-switch';
 interface ProfileInput {
   name: string;
   email: string;
@@ -136,7 +137,7 @@ export default function Profile() {
   }, [setValue, currentUser.approver]);
 
   return (
-    <article className="flex flex-col items-center justify-center">
+    <article className="flex w-4/5 flex-col items-center justify-center justify-self-center">
       <label
         htmlFor="avatar"
         className="flex h-48 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-light-background-secondary dark:border-light-background-main dark:bg-dark-background-secondary"
@@ -166,7 +167,7 @@ export default function Profile() {
         onChange={onAvatarUpdate}
       />
       <form
-        className="mt-10 flex w-4/5 flex-col space-y-4 text-light-text-main"
+        className="mt-10 flex w-full flex-col space-y-4 text-light-text-main"
         onSubmit={handleSubmit(onProfileUpdate)}
       >
         <Input
@@ -216,9 +217,12 @@ export default function Profile() {
           {isLoading ? 'Loading...' : 'Update'}
         </Button>
       </form>
-      <Button onClick={onLogout} className="mt-3 w-4/5 py-3">
-        Logout
-      </Button>
+      <div className="mt-3 flex w-full items-center justify-between gap-x-2">
+        <ThemeSwitch className="h-full" />
+        <Button onClick={onLogout} className="grow py-3">
+          Logout
+        </Button>
+      </div>
       <ToastContainer />
     </article>
   );

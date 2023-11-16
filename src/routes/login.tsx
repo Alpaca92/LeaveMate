@@ -54,11 +54,11 @@ export default function Login() {
   };
 
   return (
-    <article className="flex w-full flex-col items-center justify-center">
+    <article className="flex w-4/5 flex-col items-center justify-center justify-self-center">
       <p className="text-4xl font-extrabold">Login</p>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="mt-10 flex w-4/5 flex-col space-y-4 text-light-text-main"
+        className="mt-10 flex w-full flex-col space-y-4 text-light-text-main"
       >
         <Input
           type="email"

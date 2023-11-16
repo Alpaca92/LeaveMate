@@ -67,11 +67,11 @@ export default function Signup() {
   };
 
   return (
-    <article className="flex w-full flex-col items-center justify-center">
+    <article className="flex w-4/5 flex-col items-center justify-center justify-self-center">
       <p className="text-4xl font-extrabold">Create Account</p>
       <form
         onSubmit={handleSubmit(onSignup)}
-        className="mt-10 flex w-4/5 flex-col space-y-4 text-light-text-main"
+        className="mt-10 flex w-full flex-col space-y-4 text-light-text-main"
       >
         <Input
           placeholder="성이름"
