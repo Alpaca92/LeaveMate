@@ -6,6 +6,10 @@
   .text-align-last-center {
     text-align-last: center;
   }
+
+  body *::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @font-face {
