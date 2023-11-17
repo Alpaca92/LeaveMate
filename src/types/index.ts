@@ -18,6 +18,7 @@ export interface DateRange {
   endMeridiem: string;
 }
 export interface Request extends DateRange {
+  createdAt: number;
   approver: string;
   reason: string;
   userId: string;

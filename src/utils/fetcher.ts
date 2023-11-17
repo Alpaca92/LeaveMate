@@ -53,28 +53,8 @@ export const fetchRequests = async () => {
     const requestsSnapshot = await getDocs(requestsQuery);
 
     requestsSnapshot.forEach((doc) => {
-      const {
-        approver,
-        endDate,
-        endMeridiem,
-        reason,
-        startDate,
-        startMeridiem,
-        userId,
-        username,
-        status,
-      } = doc.data();
-
       requestsList.push({
-        approver,
-        endDate,
-        endMeridiem,
-        reason,
-        startDate,
-        startMeridiem,
-        userId,
-        username,
-        status,
+        ...(doc.data() as Omit<Request, 'docId'>),
         docId: doc.id,
       });
     });

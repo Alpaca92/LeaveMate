@@ -102,9 +102,9 @@ export default function RequestModal({
       setIsLoading(true);
 
       await addDoc(collection(db, COLLECTIONS_NAME.REQUESTS), {
+        createdAt: Date.now(),
         userId: user?.uid,
         username: user?.displayName,
-        createdAt: Date.now(),
         reason,
         approver,
         endMeridiem,
