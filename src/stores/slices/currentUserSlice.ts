@@ -4,7 +4,7 @@ import type { User } from '@/types';
 interface CurrentUserSlice {
   currentUser: User;
   setCurrentUser: (data: User) => void;
-  updateCurrentUser: <T>(data: T) => void;
+  updateCurrentUser: <T extends Partial<User>>(data: T) => void;
 }
 
 const currentUserSlice: StateCreator<CurrentUserSlice> = (set) => ({
