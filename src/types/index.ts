@@ -23,5 +23,5 @@ export interface Request extends DateRange {
   userId: string;
   username: string;
   docId: string;
-  confirmation: string;
+  status: 'pending' | 'completed' | 'rejected';
 }

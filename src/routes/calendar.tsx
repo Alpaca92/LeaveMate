@@ -14,7 +14,6 @@ import {
 } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
-// FIXME: 시간으로 짤라서 background: linear-gradient(to right, red 75%, blue 75%, blue 100%); 처럼 계산할텐데 meridiem이 필요할까?
 interface CustomEvent extends Event {
   meridiem: 'am' | 'pm' | 'all';
 }

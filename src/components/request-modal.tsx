@@ -98,9 +98,6 @@ export default function RequestModal({
 
     if (!Utils.hasNoEmptyValues(data)) return;
 
-    // FIXME: 저장할 때 EndDate는 am 일 때 12시간 만큼, pm일 때 24시간 만큼 더해주고,
-    // startDate는 pm일 때에만 12시간 더해주도록 수정하기
-
     try {
       setIsLoading(true);
 
@@ -114,7 +111,7 @@ export default function RequestModal({
         startMeridiem,
         endDate,
         startDate,
-        confirmation: false,
+        status: 'pending',
       });
 
       await updateDoc(
@@ -125,6 +122,7 @@ export default function RequestModal({
       );
 
       updateCurrentUser({ approver });
+      // FIXME: update requests
       setModalVisivility(false);
     } catch (error) {
       console.error(error);
@@ -211,8 +209,9 @@ export default function RequestModal({
             <option value="pm">오후</option>
           </select>
         </div>
-        <label htmlFor="end-date">결재자</label>
+        <label htmlFor="approver">결재자</label>
         <select
+          id="approver"
           className="h-10 rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
           {...register('approver', {
             required: {

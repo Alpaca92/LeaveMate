@@ -62,7 +62,7 @@ export const fetchRequests = async () => {
         startMeridiem,
         userId,
         username,
-        confirmation,
+        status,
       } = doc.data();
 
       requestsList.push({
@@ -74,7 +74,7 @@ export const fetchRequests = async () => {
         startMeridiem,
         userId,
         username,
-        confirmation,
+        status,
         docId: doc.id,
       });
     });
