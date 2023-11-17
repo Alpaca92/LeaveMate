@@ -3,7 +3,7 @@ import Modal from '@/components/modal';
 import RequestModal from '@/components/request-modal';
 import RootStore from '@/stores/store';
 import { Request } from '@/types';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
 interface RequestModalProps {
@@ -35,7 +35,7 @@ const PendingRequest = ({ username, approver, reason }: Request) => {
   return (
     <li className="space-y-3 rounded-xl border border-dark-background-secondary p-4 dark:border-light-background-secondary">
       <p className="text-dark-text-accent dark:text-light-text-accent">
-        {/* FIXME: 날짜를 정상적으로 적용될 수 있도록 해야 함 => 모달을 먼저 해결해야 함 */}
+        {/* FIXME: 날짜를 정상적으로 적용될 수 있도록 해야 함 => Request data를 가공해서 끝나는날에 +0.5를 해주기 */}
         23/03/01(목) 오전 ~ 23/03/02(금) 오전 (1.5일간)
       </p>
       <p>{reason}</p>
@@ -56,7 +56,7 @@ const CompleteRequest = ({ username, approver, reason }: Request) => {
   return (
     <li className="space-y-3 rounded-xl border border-dark-background-secondary p-4 dark:border-light-background-secondary">
       <p className="text-dark-text-accent dark:text-light-text-accent">
-        {/* FIXME: 날짜를 정상적으로 적용될 수 있도록 해야 함 => 모달을 먼저 해결해야 함 */}
+        {/* FIXME: 날짜를 정상적으로 적용될 수 있도록 해야 함 => Request data를 가공해서 끝나는날에 +0.5를 해주기 */}
         23/03/01(목) 오전 ~ 23/03/02(금) 오전 (1.5일간)
       </p>
       <p>{reason}</p>
