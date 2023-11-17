@@ -1,10 +1,9 @@
 import Button from '@/components/button';
 import Modal from '@/components/modal';
-import { QUERY_KEYS } from '@/config/config';
 import RequestModal from '@/components/request-modal';
-import Utils from '@/utils';
-import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import RootStore from '@/stores/store';
+import { useEffect, useMemo, useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 
 interface RequestModalProps {
   onClick: () => void;
@@ -34,10 +33,15 @@ const RequestButton = ({ onClick }: RequestModalProps) => {
 export default function Home() {
   const [isShow, setIsShow] = useState<boolean>(false);
   const [currentTapIndex, setCurrentTapIndex] = useState(0);
-  const { data } = useQuery({
-    queryKey: [QUERY_KEYS.FIRESTORE, QUERY_KEYS.REQUESTS],
-    queryFn: Utils.fetchRequests,
-  });
+  const requests = RootStore(useShallow((state) => state.requests));
+  const confirmedRequestsList = useMemo(
+    () => requests.filter(({ confirmation }) => confirmation),
+    [requests],
+  );
+  const rejectedRequestsList = useMemo(
+    () => requests.filter(({ confirmation }) => !confirmation),
+    [requests],
+  );
 
   const onShowModal = () => {
     setIsShow(true);
@@ -65,26 +69,51 @@ export default function Home() {
         ))}
       </ul>
       <ul className="mt-4 space-y-4">
-        {new Array(50).fill(0).map((_, i) => (
-          // FIXME: currentTapIndex에 따라 보여줄 list 달리하기
-          <li
-            key={i}
-            className="rounded-xl border border-dark-background-secondary p-4 dark:border-light-background-secondary"
-          >
-            <p className="text-dark-text-accent dark:text-light-text-accent">
-              기간: 23/03/01(목) 오전 ~ 23/03/02(금) 오전 (1.5일간)
-            </p>
-            <div className="flex justify-between">
-              <div className="mt-3 flex flex-col">
-                <span>기안자: 이름</span>
-                <span>결재자: 팀장</span>
-              </div>
-              <Button className="self-end border border-dark-background-secondary px-3 py-1 dark:border-light-background-secondary">
-                취소
-              </Button>
-            </div>
-          </li>
-        ))}
+        {currentTapIndex === 0
+          ? confirmedRequestsList.map(
+              ({ docId, username, approver, reason }) => (
+                <li
+                  key={docId}
+                  className="space-y-3 rounded-xl border border-dark-background-secondary p-4 dark:border-light-background-secondary"
+                >
+                  <p className="text-dark-text-accent dark:text-light-text-accent">
+                    {/* FIXME: 날짜를 정상적으로 적용될 수 있도록 해야 함 => 모달을 먼저 해결해야 함 */}
+                    23/03/01(목) 오전 ~ 23/03/02(금) 오전 (1.5일간)
+                  </p>
+                  <p>{reason}</p>
+                  <div className="flex justify-between">
+                    <div className="flex flex-col">
+                      <span>{`기안자: ${username}`}</span>
+                      <span>{`결재자: ${approver}`}</span>
+                    </div>
+                    <Button className="self-end border border-dark-background-secondary px-3 py-1 dark:border-light-background-secondary">
+                      취소
+                    </Button>
+                  </div>
+                </li>
+              ),
+            )
+          : rejectedRequestsList.map(
+              ({ docId, username, approver, reason }) => (
+                <li
+                  key={docId}
+                  className="space-y-3 rounded-xl border border-dark-background-secondary p-4 dark:border-light-background-secondary"
+                >
+                  <p className="text-dark-text-accent dark:text-light-text-accent">
+                    {/* FIXME: 날짜를 정상적으로 적용될 수 있도록 해야 함 => 모달을 먼저 해결해야 함 */}
+                    23/03/01(목) 오전 ~ 23/03/02(금) 오전 (1.5일간)
+                  </p>
+                  <p>{reason}</p>
+                  <div className="flex justify-between">
+                    <div className="flex flex-col">
+                      <span>{`기안자: ${username}`}</span>
+                      <span>{`결재자: ${approver}`}</span>
+                    </div>
+                    {/* FIXME: 결재가 됐는지 반려가 됐는지 알 수 있는 버튼과 비슷한 사이즈의 박스 추가 */}
+                  </div>
+                </li>
+              ),
+            )}
       </ul>
       <RequestButton onClick={onShowModal} />
       <Modal isShow={isShow} onClose={onCloseModal}>
