@@ -1,3 +1,4 @@
+import Utils from '@/utils';
 import moment from 'moment';
 import {
   DateHeaderProps,
@@ -88,7 +89,18 @@ export default function Calendar() {
 
   const Month = {
     dateHeader: ({ date }: DateHeaderProps) => {
-      return <span>{date.getDate()}</span>;
+      const [currentDate, currentDay] = [date.getDate(), date.getDay()];
+
+      return (
+        <span
+          className={Utils.combineClassNames(
+            currentDay === 0 ? 'text-red-500' : '',
+            currentDay === 6 ? 'text-blue-500' : '',
+          )}
+        >
+          {currentDate}
+        </span>
+      );
     },
     header: ({ date }: HeaderProps) => {
       const dateList = ['일', '월', '화', '수', '목', '금', '토'];
