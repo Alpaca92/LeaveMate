@@ -8,8 +8,13 @@ import { Outlet } from 'react-router-dom';
 import RootStore from '@/stores/store';
 
 export default function Layout() {
-  const setMembers = RootStore((state) => state.setMembers);
-  const setCurrentUser = RootStore((state) => state.setCurrentUser);
+  const { setMembers, setCurrentUser, setRequests } = RootStore(
+    ({ setMembers, setCurrentUser, setRequests }) => ({
+      setMembers,
+      setCurrentUser,
+      setRequests,
+    }),
+  );
 
   const { isSuccess: membersSuccess, data: membersData } = useQuery({
     queryKey: [QUERY_KEYS.FIRESTORE, QUERY_KEYS.MEMBERS],
@@ -18,6 +23,10 @@ export default function Layout() {
   const { isSuccess: currentUserSuccess, data: currentUserData } = useQuery({
     queryKey: [QUERY_KEYS.FIRESTORE, QUERY_KEYS.CURRENT_USER],
     queryFn: Utils.fetchCurrentUser,
+  });
+  const { isSuccess: requestsSuccess, data: requestsData } = useQuery({
+    queryKey: [QUERY_KEYS.FIRESTORE, QUERY_KEYS.REQUESTS],
+    queryFn: Utils.fetchRequests,
   });
 
   useEffect(() => {
@@ -28,6 +37,10 @@ export default function Layout() {
     if (currentUserSuccess) {
       setCurrentUser(currentUserData);
     }
+
+    if (requestsSuccess) {
+      setRequests(requestsData);
+    }
   }, [
     membersSuccess,
     membersData,
@@ -35,6 +48,9 @@ export default function Layout() {
     currentUserSuccess,
     currentUserData,
     setCurrentUser,
+    requestsSuccess,
+    requestsData,
+    setRequests,
   ]);
 
   useEffect(() => {
