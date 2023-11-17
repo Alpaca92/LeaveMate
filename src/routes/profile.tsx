@@ -19,7 +19,7 @@ import { Theme, ToastContainer, toast } from 'react-toastify';
 import Input from '@/components/input';
 import Button from '@/components/button';
 import ThemeSwitch from '@/components/theme-switch';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 interface ProfileInput {
   name: string;
   email: string;
@@ -66,6 +66,26 @@ export default function Profile() {
     });
   };
 
+  const { mutateAsync } = useMutation({
+    mutationFn: async ({ approver, email, name }: ProfileInput) => {
+      try {
+        await updateDoc(
+          doc(collection(db, COLLECTIONS_NAME.USERS), currentUser.userId),
+          {
+            name,
+            email,
+            approver,
+          },
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    onSuccess: (_, { approver }) => {
+      updateCurrentUser({ approver });
+    },
+  });
+
   const onAvatarUpdate = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!user) return;
 
@@ -85,30 +105,12 @@ export default function Profile() {
     }
   };
 
-  const { mutateAsync } = useMutation({
-    mutationFn: async ({ approver, email, name }: ProfileInput) => {
-      try {
-        await updateDoc(
-          doc(collection(db, COLLECTIONS_NAME.USERS), currentUser.userId),
-          {
-            name,
-            email,
-            approver,
-          },
-        );
-      } catch (error) {
-        console.error(error);
-      }
-    },
-  });
-
   const onProfileUpdate = async (data: ProfileInput) => {
     if (!Utils.hasNoEmptyValues(data)) return;
 
     try {
       setIsLoading(true);
       await mutateAsync(data);
-      // updateCurrentUser({ approver }); // FIXME: mutation 되고 난 후 zustand store update 하기
     } catch (error) {
       console.error(error);
 
