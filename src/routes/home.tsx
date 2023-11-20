@@ -4,7 +4,7 @@ import RequestModal from '@/components/request-modal';
 import RootStore from '@/stores/store';
 import { Request } from '@/types';
 import Utils from '@/utils';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
 interface RequestModalProps {
@@ -65,18 +65,34 @@ const PendingRequest = ({
   );
 };
 
-const CompleteRequest = ({ username, approver, reason }: Request) => {
+const CompleteRequest = ({
+  username,
+  approver,
+  reason,
+  endDate,
+  endMeridiem,
+  startDate,
+  startMeridiem,
+  status,
+}: Request) => {
   return (
     <li className="space-y-3 rounded-xl border border-dark-background-secondary p-4 dark:border-light-background-secondary">
       <p className="text-dark-text-accent dark:text-light-text-accent">
-        {/* FIXME: 날짜를 정상적으로 적용될 수 있도록 해야 함 => Request data를 가공해서 끝나는날에 +0.5를 해주기 */}
-        23/03/01(목) 오전 ~ 23/03/02(금) 오전 (1.5일간)
+        {Utils.getRequestTitle({
+          endDate,
+          endMeridiem,
+          startDate,
+          startMeridiem,
+        })}
       </p>
       <p>{reason}</p>
       <div className="flex justify-between">
         <div className="flex flex-col">
           <span>{`기안자: ${username}`}</span>
           <span>{`결재자: ${approver}`}</span>
+        </div>
+        <div className="self-end border border-dark-background-secondary px-3 py-1 dark:border-light-background-secondary">
+          {status === 'completed' ? '승인' : '반려'}
         </div>
         {/* FIXME: 결재가 됐는지 반려가 됐는지 알 수 있는 버튼과 비슷한 사이즈의 박스 추가 */}
       </div>
@@ -85,16 +101,22 @@ const CompleteRequest = ({ username, approver, reason }: Request) => {
 };
 
 export default function Home() {
+  const PENDING_INDEX = 0;
   const [isShow, setIsShow] = useState<boolean>(false);
-  const [currentTapIndex, setCurrentTapIndex] = useState(0);
-  const requests = RootStore(useShallow((state) => state.requests));
-  const pendingRequests = useMemo(
-    () => requests.filter(({ status }) => status === 'pending'),
-    [requests],
+  const [currentTapIndex, setCurrentTapIndex] = useState(PENDING_INDEX);
+  const pendingRequests = RootStore(
+    useShallow((state) =>
+      state.requests
+        .filter((request) => request.status === 'pending')
+        .sort((prev, cur) => cur.startDate.seconds - prev.startDate.seconds),
+    ),
   );
-  const completeRequests = useMemo(
-    () => requests.filter(({ status }) => status !== 'pending'),
-    [requests],
+  const completeRequests = RootStore(
+    useShallow((state) =>
+      state.requests
+        .filter((request) => request.status !== 'pending')
+        .sort((prev, cur) => cur.startDate.seconds - prev.startDate.seconds),
+    ),
   );
 
   const onShowModal = () => {
@@ -123,7 +145,7 @@ export default function Home() {
         ))}
       </ul>
       <ul className="mt-4 space-y-4">
-        {currentTapIndex === 0
+        {currentTapIndex === PENDING_INDEX
           ? pendingRequests.map((request) => (
               <PendingRequest key={request.docId} {...request} />
             ))
