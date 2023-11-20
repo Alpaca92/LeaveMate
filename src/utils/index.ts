@@ -44,13 +44,45 @@ const combineClassNames = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 const convertMeridiemToKorean = (meridiem: string) =>
   meridiem === 'am' ? '오전' : '오후';
 
-const getDateRangeToNumber = ({
+const getRequestTitle = ({
   startDate,
   endDate,
-  endMeridiem,
   startMeridiem,
+  endMeridiem,
 }: DateRange) => {
-  // TODO: 휴가 기간동안이 몇일인지 숫자로 표현하는 함수
+  // FIXME: 중간에 주말이나 공휴일이 껴있을 때를 고려해서 계산해야 함
+  const MILLISECONDS = 1000;
+  const SECONDS_IN_A_DAY = 24 * 60 * 60;
+  const { seconds: secondsOfStartDate } = startDate;
+  const { seconds: secondsOfEndDate } = endDate;
+  const startDateString = new Date(
+    secondsOfStartDate * MILLISECONDS,
+  ).toLocaleDateString('ko-KR', {
+    year: '2-digit',
+    month: '2-digit',
+    day: '2-digit',
+    weekday: 'short',
+  });
+  const endDateString = new Date(
+    secondsOfEndDate * MILLISECONDS,
+  ).toLocaleDateString('ko-KR', {
+    year: '2-digit',
+    month: '2-digit',
+    day: '2-digit',
+    weekday: 'short',
+  });
+
+  const term =
+    (secondsOfEndDate +
+      Number(endMeridiem === 'pm' && SECONDS_IN_A_DAY / 2) -
+      (secondsOfStartDate +
+        Number(startMeridiem === 'pm' && SECONDS_IN_A_DAY / 2)) +
+      SECONDS_IN_A_DAY / 2) /
+    SECONDS_IN_A_DAY;
+
+  return `${startDateString} ${convertMeridiemToKorean(
+    startMeridiem,
+  )} ~ ${endDateString} ${convertMeridiemToKorean(endMeridiem)} (${term}일간)`;
 };
 
 const Utils = Object.freeze({
@@ -60,7 +92,7 @@ const Utils = Object.freeze({
   hasNoEmptyValues,
   combineClassNames,
   convertMeridiemToKorean,
-  getDateRangeToNumber,
+  getRequestTitle,
   fetchMembers,
   fetchCurrentUser,
   fetchRequests,
