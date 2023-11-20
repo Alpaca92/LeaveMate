@@ -53,17 +53,6 @@ export default function Layout() {
     setRequests,
   ]);
 
-  useEffect(() => {
-    const theme = Utils.getTheme();
-    if (!theme) {
-      Utils.setTheme(THEMES.DARK);
-    } else {
-      theme === THEMES.DARK
-        ? document.body.classList.add(THEMES.DARK)
-        : document.body.classList.add(THEMES.LIGHT);
-    }
-  }, []);
-
   if (!membersSuccess || !currentUserSuccess) return <Loading />;
 
   return (
