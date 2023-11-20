@@ -1,17 +1,15 @@
 import 'react-datepicker/dist/react-datepicker.min.css';
-
 import { COLLECTIONS_NAME, ERROR_MESSAGES } from '@/config/config';
 import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '@/config/firebase';
 import { useController, useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
-
 import Button from '@/components/button';
 import DatePicker from 'react-datepicker';
 import RootStore from '@/stores/store';
 import Utils from '@/utils';
 import { useShallow } from 'zustand/react/shallow';
-
+import { useMutation } from '@tanstack/react-query';
 interface RequestModalProps {
   setModalVisivility: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -26,16 +24,16 @@ interface RequestInput {
 
 const TODAY = Date.now();
 const DATE_NOW = new Date(TODAY).setHours(0, 0, 0, 0);
-const TWELVE_HOUR_IN_MILLISECONDS = 12 * 60 * 60 * 1000;
 
 export default function RequestModal({
   setModalVisivility,
 }: RequestModalProps) {
   const user = auth.currentUser;
-  const { currentUser, updateCurrentUser } = RootStore(
-    useShallow((state) => ({
-      currentUser: state.currentUser,
-      updateCurrentUser: state.updateCurrentUser,
+  const { currentUser, updateCurrentUser, updateRequests } = RootStore(
+    useShallow(({ currentUser, updateCurrentUser, updateRequests }) => ({
+      currentUser,
+      updateCurrentUser,
+      updateRequests,
     })),
   );
   const members = RootStore(
@@ -84,6 +82,40 @@ export default function RequestModal({
     },
   });
 
+  const { mutateAsync } = useMutation({
+    mutationFn: async ({
+      reason,
+      approver,
+      startDate,
+      startMeridiem,
+      endDate,
+      endMeridiem,
+    }: RequestInput) => {
+      await addDoc(collection(db, COLLECTIONS_NAME.REQUESTS), {
+        createdAt: Date.now(),
+        userId: currentUser.userId,
+        username: currentUser.name,
+        status: 'pending',
+        reason,
+        approver,
+        startDate,
+        startMeridiem,
+        endDate,
+        endMeridiem,
+      });
+
+      await updateDoc(
+        doc(collection(db, COLLECTIONS_NAME.USERS), currentUser.userId),
+        {
+          approver,
+        },
+      );
+    },
+    onSuccess(_, { approver }) {
+      updateCurrentUser({ approver });
+    },
+  });
+
   const onStartDateChange = (date: Date) => {
     startField.onChange(date);
   };
@@ -93,40 +125,15 @@ export default function RequestModal({
   };
 
   const onRequestSubmit = async (data: RequestInput) => {
-    const { reason, endDate, endMeridiem, startDate, startMeridiem, approver } =
-      data;
-
     if (!Utils.hasNoEmptyValues(data)) return;
 
     try {
       setIsLoading(true);
-
-      await addDoc(collection(db, COLLECTIONS_NAME.REQUESTS), {
-        createdAt: Date.now(),
-        userId: user?.uid,
-        username: user?.displayName,
-        reason,
-        approver,
-        endMeridiem,
-        startMeridiem,
-        endDate,
-        startDate,
-        status: 'pending',
-      });
-
-      await updateDoc(
-        doc(collection(db, COLLECTIONS_NAME.USERS), currentUser.userId),
-        {
-          approver,
-        },
-      );
-
-      updateCurrentUser({ approver });
-      // FIXME: update requests
-      setModalVisivility(false);
+      await mutateAsync(data);
     } catch (error) {
       console.error(error);
     } finally {
+      setModalVisivility(false);
       setIsLoading(false);
     }
   };
