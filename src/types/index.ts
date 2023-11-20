@@ -1,5 +1,3 @@
-import { Timestamp } from 'firebase/firestore';
-
 export interface EmailAndPassword {
   email: string;
   password: string;
@@ -12,9 +10,9 @@ export interface User {
   approver?: string;
 }
 export interface DateRange {
-  startDate: Timestamp;
+  startDate: number;
   startMeridiem: string;
-  endDate: Timestamp;
+  endDate: number;
   endMeridiem: string;
 }
 export interface Request extends DateRange {

@@ -2,6 +2,7 @@ import {
   COLLECTIONS_NAME,
   ERROR_MESSAGES,
   PATH_NAME,
+  QUERY_KEYS,
   REGEX,
 } from '@/config/config';
 import { auth, db, storage } from '@/config/firebase';
@@ -67,6 +68,7 @@ export default function Profile() {
   };
 
   const { mutateAsync } = useMutation({
+    mutationKey: [QUERY_KEYS.FIRESTORE, QUERY_KEYS.CURRENT_USER],
     mutationFn: async ({ approver, email, name }: ProfileInput) => {
       try {
         await updateDoc(

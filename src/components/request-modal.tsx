@@ -1,5 +1,5 @@
 import 'react-datepicker/dist/react-datepicker.min.css';
-import { COLLECTIONS_NAME, ERROR_MESSAGES } from '@/config/config';
+import { COLLECTIONS_NAME, ERROR_MESSAGES, QUERY_KEYS } from '@/config/config';
 import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '@/config/firebase';
 import { useController, useForm } from 'react-hook-form';
@@ -9,7 +9,8 @@ import DatePicker from 'react-datepicker';
 import RootStore from '@/stores/store';
 import Utils from '@/utils';
 import { useShallow } from 'zustand/react/shallow';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { DateRange } from '@/types';
 interface RequestModalProps {
   setModalVisivility: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -82,7 +83,13 @@ export default function RequestModal({
     },
   });
 
-  const { mutateAsync } = useMutation({
+  const queryClient = useQueryClient();
+  const { mutateAsync } = useMutation<
+    void,
+    Error,
+    Omit<RequestInput, 'startDate' | 'endDate'> & DateRange
+  >({
+    mutationKey: [QUERY_KEYS.FIRESTORE, QUERY_KEYS.REQUESTS],
     mutationFn: async ({
       reason,
       approver,
@@ -90,7 +97,7 @@ export default function RequestModal({
       startMeridiem,
       endDate,
       endMeridiem,
-    }: RequestInput) => {
+    }) => {
       await addDoc(collection(db, COLLECTIONS_NAME.REQUESTS), {
         createdAt: Date.now(),
         userId: currentUser.userId,
@@ -113,6 +120,9 @@ export default function RequestModal({
     },
     onSuccess(_, { approver }) {
       updateCurrentUser({ approver });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.FIRESTORE, QUERY_KEYS.REQUESTS],
+      });
     },
   });
 
@@ -129,7 +139,11 @@ export default function RequestModal({
 
     try {
       setIsLoading(true);
-      await mutateAsync(data);
+      await mutateAsync({
+        ...data,
+        startDate: data.startDate.setHours(0, 0, 0, 0),
+        endDate: data.endDate.setHours(0, 0, 0, 0),
+      });
     } catch (error) {
       console.error(error);
     } finally {
