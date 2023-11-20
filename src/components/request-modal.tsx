@@ -180,10 +180,10 @@ export default function RequestModal({
           })}
         />
         <label htmlFor="start-date">시작일</label>
-        <div className="flex justify-between">
+        <div className="grid grid-cols-[2fr,1fr] gap-x-2">
           <DatePicker
             id="start-date"
-            className="rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
+            className="w-full px-3 py-2 text-dark-text-main only:rounded-lg focus:outline-none dark:text-light-text-main"
             onChange={onStartDateChange}
             selected={startField.value}
             dateFormat="yyyy/MM/dd"
@@ -205,11 +205,10 @@ export default function RequestModal({
           </select>
         </div>
         <label htmlFor="end-date">종료일</label>
-        {/* FIXME: mobile 환경에서 DatePicker와 select가 overflow되는 현상 수정: https://stackoverflow.com/a/65804356/14460912 */}
-        <div className="flex justify-between">
+        <div className="grid grid-cols-[2fr,1fr] gap-x-2">
           <DatePicker
             id="end-date"
-            className="rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
+            className="w-full rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
             onChange={onEndDateChange}
             selected={endField.value}
             dateFormat="yyyy/MM/dd"
