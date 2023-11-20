@@ -2,7 +2,7 @@ import { UseFormRegisterReturn } from 'react-hook-form';
 
 interface InputProps {
   type?: 'email' | 'text' | 'password';
-  kind?: 'input'; // FIXME: 추후에 input의 역할이 다양해질 것을 대비
+  kind?: 'input'; // 추후에 input의 역할이 다양해질 것을 대비
   placeholder: string;
   register: UseFormRegisterReturn;
 }
