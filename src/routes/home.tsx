@@ -2,7 +2,7 @@ import Button from '@/components/button';
 import Modal from '@/components/modal';
 import RequestModal from '@/components/request-modal';
 import RootStore from '@/stores/store';
-import { Request } from '@/types';
+import { Request, type Status } from '@/types';
 import Utils from '@/utils';
 import { useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
@@ -91,10 +91,13 @@ const CompleteRequest = ({
           <span>{`기안자: ${username}`}</span>
           <span>{`결재자: ${approver}`}</span>
         </div>
-        <div className="self-end border border-dark-background-secondary px-3 py-1 dark:border-light-background-secondary">
-          {status === 'completed' ? '승인' : '반려'}
+        <div
+          className={Utils.combineClassNames(
+            'self-end rounded-lg border border-dark-background-secondary bg-dark-background-main px-3 py-1 font-semibold text-dark-text-main dark:border-light-background-secondary dark:bg-light-background-main dark:text-light-text-main',
+          )}
+        >
+          {status === 'approve' ? '✅ 승인' : '❌ 반려'}
         </div>
-        {/* FIXME: 결재가 됐는지 반려가 됐는지 알 수 있는 버튼과 비슷한 사이즈의 박스 추가 */}
       </div>
     </li>
   );
