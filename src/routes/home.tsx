@@ -111,14 +111,14 @@ export default function Home() {
     useShallow((state) =>
       state.requests
         .filter((request) => request.status === 'pending')
-        .sort((prev, cur) => cur.startDate.seconds - prev.startDate.seconds),
+        .sort((prev, cur) => cur.startDate - prev.startDate),
     ),
   );
   const completeRequests = RootStore(
     useShallow((state) =>
       state.requests
         .filter((request) => request.status !== 'pending')
-        .sort((prev, cur) => cur.startDate.seconds - prev.startDate.seconds),
+        .sort((prev, cur) => cur.startDate - prev.startDate),
     ),
   );
 
