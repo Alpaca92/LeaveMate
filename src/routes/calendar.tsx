@@ -1,4 +1,5 @@
 import { QUERY_KEYS } from '@/config/config';
+import RootStore from '@/stores/store';
 import { YearAndMonth } from '@/types';
 import Utils from '@/utils';
 import { useQuery } from '@tanstack/react-query';
@@ -16,9 +17,10 @@ import {
   momentLocalizer,
 } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { useShallow } from 'zustand/react/shallow';
 
 interface CustomEvent extends Event {
-  meridiem: 'am' | 'pm' | 'all';
+  meridiem?: 'am' | 'pm' | 'all';
 }
 
 const NOW = new Date();
@@ -33,6 +35,22 @@ const localizer = momentLocalizer(moment);
 export default function Calendar() {
   const [selectedYearAndMonth, setSelectedYearAndMonth] =
     useState<YearAndMonth>(currentYearAndMonth);
+  const events: CustomEvent[] = RootStore(
+    useShallow(({ requests }) =>
+      requests
+        .filter(
+          (request) =>
+            request.status === 'completed' &&
+            new Date(request.startDate).getMonth() + 1 ===
+              selectedYearAndMonth.month,
+        )
+        .map((request) => ({
+          start: new Date(request.startDate),
+          end: new Date(request.endDate),
+          title: request.username,
+        })),
+    ),
+  );
   // FIXME: fetch가 늦게되는 경우가 있고, state가 변경 후 다시 렌더링이 되기 때문에 달력 날짜 색이 느리게 변하는 문제가 발생함
   const { data: holidays } = useQuery({
     queryKey: [
@@ -44,20 +62,6 @@ export default function Calendar() {
   });
 
   // FIXME: 아래 예시코드들을 실제 코드로 변경하여 적용하기
-  const events: CustomEvent[] = [
-    {
-      start: new Date('2023-11-05T00:00:00'),
-      end: new Date('2023-11-06T12:00:00'),
-      title: 'MRI Registration',
-      meridiem: 'all',
-    },
-    {
-      start: new Date('2023-11-05T00:00:00'),
-      end: new Date('2023-11-06T12:00:00'),
-      title: 'MRI Registration',
-      meridiem: 'am',
-    },
-  ];
 
   function Toolbar({ date, onNavigate }: ToolbarProps) {
     const [year, month] = [date.getFullYear(), date.getMonth() + 1];
@@ -175,9 +179,10 @@ export default function Calendar() {
 
   const eventPropGetter: EventPropGetter<Event> = ({ title }) => {
     const eventProp = {};
-    const green = title === 'MRI Registration' && 'bg-red';
 
-    Object.assign(eventProp, { className: green });
+    Object.assign(eventProp, {
+      style: { backgroundColor: 'red' },
+    });
 
     return eventProp;
   };
