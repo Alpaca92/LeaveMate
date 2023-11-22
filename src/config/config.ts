@@ -38,6 +38,7 @@ const QUERY_KEYS = Object.freeze({
   MEMBERS: 'members',
   CURRENT_USER: 'current-user',
   REQUESTS: 'requests',
+  HOLIDAYS: 'holidays',
 });
 
 const PORTAL_KEYS = Object.freeze({

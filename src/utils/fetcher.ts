@@ -1,8 +1,9 @@
-import type { Request, User } from '@/types';
+import type { Request, User, YearAndMonth } from '@/types';
 import { auth, db } from '@/config/firebase';
 import { collection, doc, getDoc, getDocs, query } from 'firebase/firestore';
-
 import { COLLECTIONS_NAME } from '@/config/config';
+import axios from 'axios';
+import Utils from '@/utils';
 
 export const fetchMembers = async () => {
   const membersList: User[] = [];
@@ -63,4 +64,51 @@ export const fetchRequests = async () => {
   }
 
   return requestsList;
+};
+interface Holiday {
+  dateKind: string;
+  dateName: string;
+  isHoliday: string;
+  locdate: number;
+  seq: number;
+}
+
+interface GetHolidaysAxiosResponse {
+  data: {
+    response: {
+      body: {
+        items: {
+          item?: Holiday[] | Holiday;
+        };
+      };
+    };
+  };
+}
+
+export const fetchHolidays = async ({ year, month }: YearAndMonth) => {
+  const baseUrl =
+    'https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getHoliDeInfo';
+  const apiKey =
+    'eZ17cnoKvHmrAu76may4JvwjqwpWBdD2bP%2Fs4mFIZjIphAOMnKRq8yOHaC3DXjYEpWJyic%2FdtW14XLgGJxJ%2B1g%3D%3D';
+  const url = `${baseUrl}?serviceKey=${apiKey}&solYear=${year}&solMonth=${Utils.formatNumberToTwoDigits(
+    month,
+  )}`;
+
+  const {
+    data: {
+      response: {
+        body: {
+          items: { item: holidays },
+        },
+      },
+    },
+  }: GetHolidaysAxiosResponse = await axios.get(url);
+
+  if (!holidays) return [];
+
+  if (holidays instanceof Array) {
+    return holidays.map((holiday) => holiday.locdate.toString().slice(-2));
+  } else {
+    return [holidays.locdate.toString().slice(-2)];
+  }
 };

@@ -1,10 +1,14 @@
 import { LOCALSTORAGE_KEYS, THEMES } from '@/config/config';
-import { fetchCurrentUser, fetchMembers, fetchRequests } from './fetcher';
-import type { DateRange, YearAndMonth } from '@/types';
+import {
+  fetchCurrentUser,
+  fetchMembers,
+  fetchRequests,
+  fetchHolidays,
+} from './fetcher';
+import type { DateRange } from '@/types';
 import { ClassValue } from 'clsx';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import axios from 'axios';
 
 const getTheme = () => localStorage.getItem(LOCALSTORAGE_KEYS.THEME);
 
@@ -82,54 +86,6 @@ const getRequestTitle = ({
 const formatNumberToTwoDigits = (number: number): string =>
   ('0' + number.toString()).slice(-2);
 
-interface Holiday {
-  dateKind: string;
-  dateName: string;
-  isHoliday: string;
-  locdate: number;
-  seq: number;
-}
-
-interface GetHolidaysAxiosResponse {
-  data: {
-    response: {
-      body: {
-        items: {
-          item?: Holiday[] | Holiday;
-        };
-      };
-    };
-  };
-}
-
-const getHolidays = async ({ year, month }: YearAndMonth) => {
-  const baseUrl =
-    'https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getHoliDeInfo';
-  const apiKey =
-    'eZ17cnoKvHmrAu76may4JvwjqwpWBdD2bP%2Fs4mFIZjIphAOMnKRq8yOHaC3DXjYEpWJyic%2FdtW14XLgGJxJ%2B1g%3D%3D';
-  const url = `${baseUrl}?serviceKey=${apiKey}&solYear=${year}&solMonth=${formatNumberToTwoDigits(
-    month,
-  )}`;
-
-  const {
-    data: {
-      response: {
-        body: {
-          items: { item: holidays },
-        },
-      },
-    },
-  }: GetHolidaysAxiosResponse = await axios.get(url);
-
-  if (!holidays) return [];
-
-  if (holidays instanceof Array) {
-    return holidays.map((holiday) => holiday.locdate.toString().slice(-2));
-  } else {
-    return [holidays.locdate.toString().slice(-2)];
-  }
-};
-
 const Utils = Object.freeze({
   getTheme,
   setTheme,
@@ -139,10 +95,10 @@ const Utils = Object.freeze({
   convertMeridiemToKorean,
   getRequestTitle,
   formatNumberToTwoDigits,
-  getHolidays,
   fetchMembers,
   fetchCurrentUser,
   fetchRequests,
+  fetchHolidays,
 });
 
 export default Utils;

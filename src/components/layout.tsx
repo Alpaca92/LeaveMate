@@ -1,6 +1,6 @@
 import BottomNavigation from '@/components/bottom-navigation';
 import Loading from '@/components/loading';
-import { QUERY_KEYS, THEMES } from '@/config/config';
+import { QUERY_KEYS } from '@/config/config';
 import Utils from '@/utils';
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';

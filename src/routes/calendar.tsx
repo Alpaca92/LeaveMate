@@ -1,11 +1,11 @@
-import Loading from '@/components/loading';
+import { QUERY_KEYS } from '@/config/config';
 import { YearAndMonth } from '@/types';
 import Utils from '@/utils';
+import { useQuery } from '@tanstack/react-query';
 import moment from 'moment';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   DateHeaderProps,
-  DayPropGetter,
   Event,
   EventPropGetter,
   EventProps,
@@ -33,21 +33,15 @@ const localizer = momentLocalizer(moment);
 export default function Calendar() {
   const [selectedYearAndMonth, setSelectedYearAndMonth] =
     useState<YearAndMonth>(currentYearAndMonth);
-  const [holidays, setHolidays] = useState<string[]>([]);
-
-  const fetchHolidays = useCallback(async () => {
-    try {
-      const holidays = await Utils.getHolidays(selectedYearAndMonth);
-      setHolidays(holidays);
-    } catch (error) {
-      console.error(error);
-    }
-  }, [selectedYearAndMonth]);
-
-  useEffect(() => {
-    // FIXME: fetch가 늦게되는 경우가 있고, state가 변경 후 다시 렌더링이 되기 때문에 달력 날짜 색이 느리게 변하는 문제가 발생함
-    fetchHolidays();
-  }, [fetchHolidays]);
+  // FIXME: fetch가 늦게되는 경우가 있고, state가 변경 후 다시 렌더링이 되기 때문에 달력 날짜 색이 느리게 변하는 문제가 발생함
+  const { data: holidays } = useQuery({
+    queryKey: [
+      QUERY_KEYS.HOLIDAYS,
+      selectedYearAndMonth.year,
+      selectedYearAndMonth.month,
+    ],
+    queryFn: () => Utils.fetchHolidays(selectedYearAndMonth),
+  });
 
   // FIXME: 아래 예시코드들을 실제 코드로 변경하여 적용하기
   const events: CustomEvent[] = [
@@ -145,7 +139,11 @@ export default function Calendar() {
   const Month = {
     dateHeader: useCallback(
       ({ date }: DateHeaderProps) => {
-        const [currentDate, currentDay] = [date.getDate(), date.getDay()];
+        const [currentMonth, currentDate, currentDay] = [
+          date.getMonth() + 1,
+          date.getDate(),
+          date.getDay(),
+        ];
         const twoDigitDay = Utils.formatNumberToTwoDigits(currentDate);
 
         return (
@@ -153,14 +151,17 @@ export default function Calendar() {
             className={Utils.combineClassNames(
               currentDay === 0 ? 'text-red-500' : '',
               currentDay === 6 ? 'text-blue-500' : '',
-              holidays.includes(twoDigitDay) ? 'text-red-500' : '',
+              selectedYearAndMonth.month === currentMonth &&
+                holidays?.includes(twoDigitDay)
+                ? 'text-red-500'
+                : '',
             )}
           >
             {currentDate}
           </span>
         );
       },
-      [holidays],
+      [holidays, selectedYearAndMonth.month],
     ),
     header: ({ date }: HeaderProps) => {
       const dateList = ['일', '월', '화', '수', '목', '금', '토'];
