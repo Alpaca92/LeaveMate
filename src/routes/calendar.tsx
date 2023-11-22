@@ -15,6 +15,7 @@ import {
   NavigateAction,
   ToolbarProps,
   momentLocalizer,
+  DateCellWrapperProps,
 } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { useShallow } from 'zustand/react/shallow';
@@ -70,8 +71,6 @@ export default function Calendar() {
     ],
     queryFn: () => Utils.fetchHolidays(selectedYearAndMonth),
   });
-
-  // FIXME: 아래 예시코드들을 실제 코드로 변경하여 적용하기
 
   function Toolbar({ date, onNavigate }: ToolbarProps) {
     const [year, month] = [date.getFullYear(), date.getMonth() + 1];
@@ -187,6 +186,19 @@ export default function Calendar() {
     },
   };
 
+  const DateCellWrapper = ({ value }: DateCellWrapperProps) => {
+    return (
+      <div
+        className={Utils.combineClassNames(
+          value.getMonth() + 1 !== selectedYearAndMonth.month
+            ? 'bg-light-background-secondary dark:bg-dark-background-secondary'
+            : '',
+          'w-full border-r border-dark-background-main last:border-none dark:border-light-background-main',
+        )}
+      />
+    );
+  };
+
   const EventWrapper = ({ event }: EventWrapperProps) => {
     const DEFAULT_COLOR = 'bg-gray-500';
     const COLORS = ['bg-red-500', 'bg-yellow-500', 'bg-blue-500'];
@@ -201,6 +213,7 @@ export default function Calendar() {
       <div
         className={Utils.combineClassNames(
           userIndex === -1 ? DEFAULT_COLOR : COLORS[userIndex % COLORS.length],
+          'p-[0.2rem]',
         )}
       >
         {title}
@@ -216,6 +229,7 @@ export default function Calendar() {
         components={{
           toolbar: Toolbar,
           month: { ...Month },
+          dateCellWrapper: DateCellWrapper,
           eventWrapper: EventWrapper,
         }}
         culture="ko-KR"
