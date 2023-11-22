@@ -1,5 +1,7 @@
+import { YearAndMonth } from '@/types';
 import Utils from '@/utils';
 import moment from 'moment';
+import { useCallback, useEffect, useState } from 'react';
 import {
   DateHeaderProps,
   DayPropGetter,
@@ -18,9 +20,29 @@ interface CustomEvent extends Event {
   meridiem: 'am' | 'pm' | 'all';
 }
 
+const NOW = new Date();
+const currentYearAndMonth = {
+  year: NOW.getFullYear(),
+  month: NOW.getMonth() + 1,
+};
+
+moment.locale('ko-KR');
+const localizer = momentLocalizer(moment);
+
 export default function Calendar() {
-  moment.locale('ko-KR');
-  const localizer = momentLocalizer(moment);
+  const [selectedYearAndMonth, setSelectedYearAndMonth] =
+    useState<YearAndMonth>(currentYearAndMonth);
+  const [holidays, setHolidays] = useState<string[]>([]);
+
+  useEffect(() => {
+    Utils.getHolidays(selectedYearAndMonth).then((holidays) => {
+      setHolidays(holidays);
+    });
+  }, [selectedYearAndMonth]);
+
+  useEffect(() => {
+    console.log(holidays.includes('25'));
+  }, [holidays]);
 
   // FIXME: 아래 예시코드들을 실제 코드로 변경하여 적용하기
   const events: CustomEvent[] = [
@@ -39,16 +61,42 @@ export default function Calendar() {
   ];
 
   function Toolbar({ date, onNavigate }: ToolbarProps) {
-    const [year, month] = [
-      date.getFullYear(),
-      ('0' + (date.getMonth() + 1).toString()).slice(-2),
-    ];
+    const [year, month] = [date.getFullYear(), date.getMonth() + 1];
     const navigate = (action: NavigateAction) => onNavigate(action);
+
+    const onPreviousClick = () => {
+      const newMonth = month - 1;
+
+      if (!newMonth) {
+        setSelectedYearAndMonth({ year: year - 1, month: 12 });
+      } else {
+        setSelectedYearAndMonth({ year, month: newMonth });
+      }
+
+      navigate('PREV');
+    };
+
+    const onNextClick = () => {
+      const newMonth = month + 1;
+
+      if (newMonth === 13) {
+        setSelectedYearAndMonth({ year: year + 1, month: 1 });
+      } else {
+        setSelectedYearAndMonth({ year, month: newMonth });
+      }
+
+      navigate('NEXT');
+    };
+
+    const onTodayClick = () => {
+      setSelectedYearAndMonth(currentYearAndMonth);
+      navigate('TODAY');
+    };
 
     return (
       <div className="flex items-center justify-center space-x-4 stroke-light-background-main stroke-2 text-2xl">
         <button
-          onClick={navigate.bind(null, 'PREV')}
+          onClick={onPreviousClick}
           className="w-6 rounded-full bg-slate-600 p-2"
         >
           <svg
@@ -64,9 +112,12 @@ export default function Calendar() {
             />
           </svg>
         </button>
-        <p onClick={navigate.bind(null, 'TODAY')}>{`${year} / ${month}`}</p>
+        <p
+          className="cursor-pointer"
+          onClick={onTodayClick}
+        >{`${year} / ${Utils.formatNumberToTwoDigits(month)}`}</p>
         <button
-          onClick={navigate.bind(null, 'NEXT')}
+          onClick={onNextClick}
           className="w-6 rounded-full bg-slate-600 p-2"
         >
           <svg
@@ -111,21 +162,28 @@ export default function Calendar() {
     },
   };
 
-  const dayPropGetter: DayPropGetter = (date) => {
-    const dayProp = {};
-    const day = date.getDay();
+  const dayPropGetter: DayPropGetter = useCallback(
+    (date) => {
+      const dayProp = {};
+      const [currentDate, currentDay] = [date.getDate(), date.getDay()];
+      const twoDigitDay = Utils.formatNumberToTwoDigits(currentDate);
 
-    switch (day) {
-      case 0:
+      if (holidays.includes(twoDigitDay))
         Object.assign(dayProp, { className: 'bg-red' });
-        break;
-      case 6:
-        Object.assign(dayProp, { className: 'bg-blue' });
-        break;
-    }
 
-    return dayProp; // TODO: index.css에서 @apply를 통해 style 입히기
-  };
+      switch (currentDay) {
+        case 0:
+          Object.assign(dayProp, { className: 'bg-red' });
+          break;
+        case 6:
+          Object.assign(dayProp, { className: 'bg-blue' });
+          break;
+      }
+
+      return dayProp; // TODO: index.css에서 @apply를 통해 style 입히기
+    },
+    [holidays],
+  );
 
   const eventPropGetter: EventPropGetter<Event> = ({ title }) => {
     const eventProp = {};
@@ -147,6 +205,7 @@ export default function Calendar() {
           toolbar: Toolbar,
           month: { ...Month },
         }}
+        culture="ko-KR"
         className="!h-[80%] w-full"
       />
     </article>

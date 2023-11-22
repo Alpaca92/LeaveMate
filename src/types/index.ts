@@ -24,3 +24,8 @@ export interface Request extends DateRange {
   docId: string;
   status: 'pending' | 'completed' | 'rejected';
 }
+
+export interface YearAndMonth {
+  year: number;
+  month: number;
+}
