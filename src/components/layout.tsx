@@ -53,7 +53,8 @@ export default function Layout() {
     setRequests,
   ]);
 
-  if (!membersSuccess || !currentUserSuccess) return <Loading />;
+  if (!membersSuccess || !currentUserSuccess || !requestsSuccess)
+    return <Loading />;
 
   return (
     <>

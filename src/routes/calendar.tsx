@@ -1,3 +1,4 @@
+import Loading from '@/components/loading';
 import { YearAndMonth } from '@/types';
 import Utils from '@/utils';
 import moment from 'moment';
@@ -34,15 +35,19 @@ export default function Calendar() {
     useState<YearAndMonth>(currentYearAndMonth);
   const [holidays, setHolidays] = useState<string[]>([]);
 
-  useEffect(() => {
-    Utils.getHolidays(selectedYearAndMonth).then((holidays) => {
+  const fetchHolidays = useCallback(async () => {
+    try {
+      const holidays = await Utils.getHolidays(selectedYearAndMonth);
       setHolidays(holidays);
-    });
+    } catch (error) {
+      console.error(error);
+    }
   }, [selectedYearAndMonth]);
 
   useEffect(() => {
-    console.log(holidays.includes('25'));
-  }, [holidays]);
+    // FIXME: fetch가 늦게되는 경우가 있고, state가 변경 후 다시 렌더링이 되기 때문에 달력 날짜 색이 느리게 변하는 문제가 발생함
+    fetchHolidays();
+  }, [fetchHolidays]);
 
   // FIXME: 아래 예시코드들을 실제 코드로 변경하여 적용하기
   const events: CustomEvent[] = [
@@ -138,20 +143,25 @@ export default function Calendar() {
   }
 
   const Month = {
-    dateHeader: ({ date }: DateHeaderProps) => {
-      const [currentDate, currentDay] = [date.getDate(), date.getDay()];
+    dateHeader: useCallback(
+      ({ date }: DateHeaderProps) => {
+        const [currentDate, currentDay] = [date.getDate(), date.getDay()];
+        const twoDigitDay = Utils.formatNumberToTwoDigits(currentDate);
 
-      return (
-        <span
-          className={Utils.combineClassNames(
-            currentDay === 0 ? 'text-red-500' : '',
-            currentDay === 6 ? 'text-blue-500' : '',
-          )}
-        >
-          {currentDate}
-        </span>
-      );
-    },
+        return (
+          <span
+            className={Utils.combineClassNames(
+              currentDay === 0 ? 'text-red-500' : '',
+              currentDay === 6 ? 'text-blue-500' : '',
+              holidays.includes(twoDigitDay) ? 'text-red-500' : '',
+            )}
+          >
+            {currentDate}
+          </span>
+        );
+      },
+      [holidays],
+    ),
     header: ({ date }: HeaderProps) => {
       const dateList = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -161,29 +171,6 @@ export default function Calendar() {
       return <span>{title}</span>;
     },
   };
-
-  const dayPropGetter: DayPropGetter = useCallback(
-    (date) => {
-      const dayProp = {};
-      const [currentDate, currentDay] = [date.getDate(), date.getDay()];
-      const twoDigitDay = Utils.formatNumberToTwoDigits(currentDate);
-
-      if (holidays.includes(twoDigitDay))
-        Object.assign(dayProp, { className: 'bg-red' });
-
-      switch (currentDay) {
-        case 0:
-          Object.assign(dayProp, { className: 'bg-red' });
-          break;
-        case 6:
-          Object.assign(dayProp, { className: 'bg-blue' });
-          break;
-      }
-
-      return dayProp; // TODO: index.css에서 @apply를 통해 style 입히기
-    },
-    [holidays],
-  );
 
   const eventPropGetter: EventPropGetter<Event> = ({ title }) => {
     const eventProp = {};
@@ -199,7 +186,6 @@ export default function Calendar() {
       <LeaveCalendar
         localizer={localizer}
         events={events}
-        dayPropGetter={dayPropGetter}
         eventPropGetter={eventPropGetter}
         components={{
           toolbar: Toolbar,
