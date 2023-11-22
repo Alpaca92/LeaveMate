@@ -181,6 +181,7 @@ export default function RequestModal({
         />
         <label htmlFor="start-date">시작일</label>
         <div className="grid grid-cols-[2fr,1fr] gap-x-2">
+          {/* FIXME: onClick 시 나타나는 달력 position: fixed로 변경하기 */}
           <DatePicker
             id="start-date"
             className="w-full px-3 py-2 text-dark-text-main only:rounded-lg focus:outline-none dark:text-light-text-main"
