@@ -22,7 +22,7 @@ export interface Request extends DateRange {
   userId: string;
   username: string;
   docId: string;
-  status: 'pending' | 'completed' | 'rejected';
+  status: 'pending' | 'approve' | 'rejected';
 }
 
 export interface YearAndMonth {

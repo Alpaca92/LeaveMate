@@ -6,12 +6,12 @@ import { useQuery } from '@tanstack/react-query';
 import moment from 'moment';
 import { useCallback, useState } from 'react';
 import {
+  Calendar as LeaveCalendar,
   DateHeaderProps,
   Event,
-  EventPropGetter,
   EventProps,
+  EventWrapperProps,
   HeaderProps,
-  Calendar as LeaveCalendar,
   NavigateAction,
   ToolbarProps,
   momentLocalizer,
@@ -35,12 +35,19 @@ const localizer = momentLocalizer(moment);
 export default function Calendar() {
   const [selectedYearAndMonth, setSelectedYearAndMonth] =
     useState<YearAndMonth>(currentYearAndMonth);
+  const myTeamMembers = RootStore(
+    useShallow(({ currentUser, members }) =>
+      members
+        .filter((member) => currentUser.approver === member.approver)
+        .map((member) => member.name),
+    ),
+  );
   const events: CustomEvent[] = RootStore(
     useShallow(({ requests }) =>
       requests
         .filter(
           (request) =>
-            request.status === 'completed' &&
+            request.status === 'approve' &&
             new Date(request.startDate).getMonth() + 1 ===
               selectedYearAndMonth.month,
         )
@@ -48,6 +55,9 @@ export default function Calendar() {
           start: new Date(request.startDate),
           end: new Date(request.endDate),
           title: request.username,
+          resource: {
+            username: request.username,
+          },
         })),
     ),
   );
@@ -177,14 +187,25 @@ export default function Calendar() {
     },
   };
 
-  const eventPropGetter: EventPropGetter<Event> = ({ title }) => {
-    const eventProp = {};
+  const EventWrapper = ({ event }: EventWrapperProps) => {
+    const DEFAULT_COLOR = 'bg-gray-500';
+    const COLORS = ['bg-red-500', 'bg-yellow-500', 'bg-blue-500'];
 
-    Object.assign(eventProp, {
-      style: { backgroundColor: 'red' },
-    });
+    const {
+      title,
+      resource: { username },
+    } = event;
+    const userIndex = myTeamMembers.indexOf(username);
 
-    return eventProp;
+    return (
+      <div
+        className={Utils.combineClassNames(
+          userIndex === -1 ? DEFAULT_COLOR : COLORS[userIndex % COLORS.length],
+        )}
+      >
+        {title}
+      </div>
+    );
   };
 
   return (
@@ -192,10 +213,10 @@ export default function Calendar() {
       <LeaveCalendar
         localizer={localizer}
         events={events}
-        eventPropGetter={eventPropGetter}
         components={{
           toolbar: Toolbar,
           month: { ...Month },
+          eventWrapper: EventWrapper,
         }}
         culture="ko-KR"
         className="!h-[80%] w-full"
