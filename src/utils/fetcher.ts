@@ -85,7 +85,9 @@ interface GetHolidaysAxiosResponse {
   };
 }
 
-export const fetchHolidays = async ({ year, month }: YearAndMonth) => {
+export const fetchPublicHolidays = async ({ year, month }: YearAndMonth) => {
+  const currentMonthHolidays = { year, month };
+
   const baseUrl =
     'https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo';
   const apiKey =
@@ -98,17 +100,24 @@ export const fetchHolidays = async ({ year, month }: YearAndMonth) => {
     data: {
       response: {
         body: {
-          items: { item: holidays },
+          items: { item: publicHolidays },
         },
       },
     },
   }: GetHolidaysAxiosResponse = await axios.get(url);
 
-  if (!holidays) return [];
+  if (!publicHolidays)
+    return Object.assign(currentMonthHolidays, { holidays: [] });
 
-  if (holidays instanceof Array) {
-    return holidays.map((holiday) => holiday.locdate.toString().slice(-2));
+  if (publicHolidays instanceof Array) {
+    return Object.assign(currentMonthHolidays, {
+      holidays: publicHolidays.map((holiday) =>
+        holiday.locdate.toString().slice(-2),
+      ),
+    });
   } else {
-    return [holidays.locdate.toString().slice(-2)];
+    return Object.assign(currentMonthHolidays, {
+      holidays: [publicHolidays.locdate.toString().slice(-2)],
+    });
   }
 };

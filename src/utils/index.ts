@@ -3,7 +3,7 @@ import {
   fetchCurrentUser,
   fetchMembers,
   fetchRequests,
-  fetchHolidays,
+  fetchPublicHolidays,
 } from './fetcher';
 import type { DateRange } from '@/types';
 import { ClassValue } from 'clsx';
@@ -48,15 +48,32 @@ const combineClassNames = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 const convertMeridiemToKorean = (meridiem: string) =>
   meridiem === 'am' ? '오전' : '오후';
 
+// FIXME: 중간에 주말이나 공휴일이 껴있을 때를 고려해서 계산해야 함
+const getWeekdaysBetweenDates = ({
+  startDate,
+  endDate,
+  startMeridiem,
+  endMeridiem,
+}: DateRange): number => {
+  const MILLISECONDS = 1000;
+  const MILLISECONDS_IN_A_DAY = 24 * 60 * 60 * MILLISECONDS;
+  const term =
+    (endDate +
+      Number(endMeridiem === 'pm' && MILLISECONDS_IN_A_DAY / 2) -
+      (startDate +
+        Number(startMeridiem === 'pm' && MILLISECONDS_IN_A_DAY / 2)) +
+      MILLISECONDS_IN_A_DAY / 2) /
+    MILLISECONDS_IN_A_DAY;
+
+  return term;
+};
+
 const getRequestTitle = ({
   startDate,
   endDate,
   startMeridiem,
   endMeridiem,
 }: DateRange) => {
-  // FIXME: 중간에 주말이나 공휴일이 껴있을 때를 고려해서 계산해야 함
-  const MILLISECONDS = 1000;
-  const MILLISECONDS_IN_A_DAY = 24 * 60 * 60 * MILLISECONDS;
   const startDateString = new Date(startDate).toLocaleDateString('ko-KR', {
     year: '2-digit',
     month: '2-digit',
@@ -70,13 +87,12 @@ const getRequestTitle = ({
     weekday: 'short',
   });
 
-  const term =
-    (endDate +
-      Number(endMeridiem === 'pm' && MILLISECONDS_IN_A_DAY / 2) -
-      (startDate +
-        Number(startMeridiem === 'pm' && MILLISECONDS_IN_A_DAY / 2)) +
-      MILLISECONDS_IN_A_DAY / 2) /
-    MILLISECONDS_IN_A_DAY;
+  const term = getWeekdaysBetweenDates({
+    startDate,
+    endDate,
+    startMeridiem,
+    endMeridiem,
+  });
 
   return `${startDateString} ${convertMeridiemToKorean(
     startMeridiem,
@@ -98,7 +114,7 @@ const Utils = Object.freeze({
   fetchMembers,
   fetchCurrentUser,
   fetchRequests,
-  fetchHolidays,
+  fetchPublicHolidays,
 });
 
 export default Utils;

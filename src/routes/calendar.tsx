@@ -63,13 +63,13 @@ export default function Calendar() {
     ),
   );
   // FIXME: fetch가 늦게되는 경우가 있고, state가 변경 후 다시 렌더링이 되기 때문에 달력 날짜 색이 느리게 변하는 문제가 발생함
-  const { data: holidays } = useQuery({
+  const { data: PublicHolidays } = useQuery({
     queryKey: [
       QUERY_KEYS.HOLIDAYS,
       selectedYearAndMonth.year,
       selectedYearAndMonth.month,
     ],
-    queryFn: () => Utils.fetchHolidays(selectedYearAndMonth),
+    queryFn: () => Utils.fetchPublicHolidays(selectedYearAndMonth),
   });
 
   function Toolbar({ date, onNavigate }: ToolbarProps) {
@@ -165,7 +165,7 @@ export default function Calendar() {
               currentDay === 0 ? 'text-red-500' : '',
               currentDay === 6 ? 'text-blue-500' : '',
               selectedYearAndMonth.month === currentMonth &&
-                holidays?.includes(twoDigitDay)
+                PublicHolidays?.holidays?.includes(twoDigitDay)
                 ? 'text-red-500'
                 : '',
             )}
@@ -174,7 +174,7 @@ export default function Calendar() {
           </span>
         );
       },
-      [holidays, selectedYearAndMonth.month],
+      [PublicHolidays, selectedYearAndMonth.month],
     ),
     header: ({ date }: HeaderProps) => {
       const dateList = ['일', '월', '화', '수', '목', '금', '토'];
