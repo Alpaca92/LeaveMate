@@ -180,18 +180,17 @@ export default function RequestModal({
           })}
         />
         <label htmlFor="start-date">시작일</label>
-        <div className="grid grid-cols-[2fr,1fr] gap-x-2">
-          {/* FIXME: onClick 시 나타나는 달력 position: fixed로 변경하기 */}
+        <div className="flex justify-between">
           <DatePicker
             id="start-date"
-            className="w-full px-3 py-2 text-dark-text-main only:rounded-lg focus:outline-none dark:text-light-text-main"
+            className="w-full rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
             onChange={onStartDateChange}
             selected={startField.value}
             dateFormat="yyyy/MM/dd"
             name={startField.name}
           />
           <select
-            className="rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
+            className="ml-2 rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
             {...register('startMeridiem', {
               required: {
                 value: true,
@@ -206,7 +205,7 @@ export default function RequestModal({
           </select>
         </div>
         <label htmlFor="end-date">종료일</label>
-        <div className="grid grid-cols-[2fr,1fr] gap-x-2">
+        <div className="flex justify-between">
           <DatePicker
             id="end-date"
             className="w-full rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
@@ -216,7 +215,7 @@ export default function RequestModal({
             name={endField.name}
           />
           <select
-            className="rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
+            className="ml-2 rounded-lg px-3 py-2 text-dark-text-main focus:outline-none dark:text-light-text-main"
             {...register('endMeridiem', {
               required: {
                 value: true,
