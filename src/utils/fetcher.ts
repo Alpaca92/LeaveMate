@@ -87,7 +87,7 @@ interface GetHolidaysAxiosResponse {
 
 export const fetchHolidays = async ({ year, month }: YearAndMonth) => {
   const baseUrl =
-    'https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getHoliDeInfo';
+    'https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo';
   const apiKey =
     'eZ17cnoKvHmrAu76may4JvwjqwpWBdD2bP%2Fs4mFIZjIphAOMnKRq8yOHaC3DXjYEpWJyic%2FdtW14XLgGJxJ%2B1g%3D%3D';
   const url = `${baseUrl}?serviceKey=${apiKey}&solYear=${year}&solMonth=${Utils.formatNumberToTwoDigits(
