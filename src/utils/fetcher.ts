@@ -1,4 +1,4 @@
-import type { Request, User, YearAndMonth } from '@/types';
+import type { Holiday, Request, User, YearAndMonth } from '@/types';
 import { auth, db } from '@/config/firebase';
 import { collection, doc, getDoc, getDocs, query } from 'firebase/firestore';
 import { COLLECTIONS_NAME } from '@/config/config';
@@ -65,7 +65,7 @@ export const fetchRequests = async () => {
 
   return requestsList;
 };
-interface Holiday {
+interface PublicHoliday {
   dateKind: string;
   dateName: string;
   isHoliday: string;
@@ -78,14 +78,19 @@ interface GetHolidaysAxiosResponse {
     response: {
       body: {
         items: {
-          item?: Holiday[] | Holiday;
+          item?: PublicHoliday[] | PublicHoliday;
         };
       };
     };
   };
 }
 
-export const fetchPublicHolidays = async ({ year, month }: YearAndMonth) => {
+type FetchPublicHolidays = (data: YearAndMonth) => Promise<Holiday>;
+
+export const fetchPublicHolidays: FetchPublicHolidays = async ({
+  year,
+  month,
+}) => {
   const currentMonthHolidays = { year, month };
 
   const baseUrl =

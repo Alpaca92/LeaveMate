@@ -1,17 +1,27 @@
 import { create } from 'zustand';
-import { membersSlice } from '@/stores/slices/membersSlice';
-import { currentUserSlice } from '@/stores/slices/currentUserSlice';
-import { requestsSlice } from '@/stores/slices/requestsSlice';
-import type { MembersSlice } from '@/stores/slices/membersSlice';
-import type { CurrentUserSlice } from '@/stores/slices/currentUserSlice';
-import type { RequestsSlice } from '@/stores/slices/requestsSlice';
+import {
+  holidaysSlice,
+  type HolidaysSlice,
+} from '@/stores/slices/holidaysSlice';
+import {
+  currentUserSlice,
+  type CurrentUserSlice,
+} from '@/stores/slices/currentUserSlice';
+import { membersSlice, type MembersSlice } from '@/stores/slices/membersSlice';
+import {
+  requestsSlice,
+  type RequestsSlice,
+} from '@/stores/slices/requestsSlice';
 import { devtools } from 'zustand/middleware';
 
-const RootStore = create<MembersSlice & CurrentUserSlice & RequestsSlice>()(
+const RootStore = create<
+  HolidaysSlice & CurrentUserSlice & MembersSlice & RequestsSlice
+>()(
   devtools(
     (...args) => ({
-      ...membersSlice(...args),
+      ...holidaysSlice(...args),
       ...currentUserSlice(...args),
+      ...membersSlice(...args),
       ...requestsSlice(...args),
     }),
     { enabled: process.env.NODE_ENV === 'development' },
