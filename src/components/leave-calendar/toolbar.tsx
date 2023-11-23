@@ -10,6 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useContext } from 'react';
 import { NavigateAction, ToolbarProps } from 'react-big-calendar';
 
+// FIXME: prev/next button 클릭 시 새로운 휴일 데이터 불러와서 store에 저장할 것
 export default function Toolbar({ onNavigate }: ToolbarProps) {
   const { addHolidays } = RootStore(({ addHolidays }) => ({ addHolidays }));
   const { year, month } = useContext(DateStateContext);

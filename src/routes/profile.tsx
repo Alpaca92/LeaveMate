@@ -33,10 +33,10 @@ export default function Profile() {
   const [isLoading, setIsLoading] = useState(false);
   const [avatarUrl, setAvartarUrl] = useState(user?.photoURL);
   const { currentUser, updateCurrentUser } = RootStore(
-    useShallow((state) => ({
-      currentUser: state.currentUser,
-      updateCurrentUser: state.updateCurrentUser,
-    })),
+    ({ currentUser, updateCurrentUser }) => ({
+      currentUser,
+      updateCurrentUser,
+    }),
   );
   const members = RootStore(
     useShallow((state) =>

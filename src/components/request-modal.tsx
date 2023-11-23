@@ -31,11 +31,11 @@ export default function RequestModal({
 }: RequestModalProps) {
   const user = auth.currentUser;
   const { currentUser, updateCurrentUser, updateRequests } = RootStore(
-    useShallow(({ currentUser, updateCurrentUser, updateRequests }) => ({
+    ({ currentUser, updateCurrentUser, updateRequests }) => ({
       currentUser,
       updateCurrentUser,
       updateRequests,
-    })),
+    }),
   );
   const members = RootStore(
     useShallow((state) =>
