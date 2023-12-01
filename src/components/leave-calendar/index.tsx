@@ -1,12 +1,12 @@
-import DateCellWrapper from '@/components/leave-calendar/date-cell-wrapper';
-import EventWrapper from '@/components/leave-calendar/event-wrapper';
-import Toolbar from '@/components/leave-calendar/toolbar';
+import DateCellWrapper from '@/components/leave-calendar/modules/date-cell-wrapper';
+import EventWrapper from '@/components/leave-calendar/modules/event-wrapper';
+import Toolbar from '@/components/leave-calendar/modules/toolbar';
 import { YearAndMonth } from '@/types';
 import Utils from '@/utils';
 import { Dispatch, createContext, useReducer } from 'react';
 import { Calendar, Event, DateLocalizer } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import Month from './month';
+import Month from './modules/month';
 import RootStore from '@/stores/store';
 import { useShallow } from 'zustand/react/shallow';
 

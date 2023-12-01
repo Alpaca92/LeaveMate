@@ -7,16 +7,19 @@ import RootStore from '@/stores/store';
 import { Holiday } from '@/types';
 import Utils from '@/utils';
 import { useQuery } from '@tanstack/react-query';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { NavigateAction, ToolbarProps } from 'react-big-calendar';
 
 // FIXME: prev/next button 클릭 시 새로운 휴일 데이터 불러와서 store에 저장할 것
 export default function Toolbar({ onNavigate }: ToolbarProps) {
+  const [clickedButtonType, setClickedButtonType] = useState<
+    'prev' | 'next' | 'today'
+  >('today');
   const { addHolidays } = RootStore(({ addHolidays }) => ({ addHolidays }));
   const { year, month } = useContext(DateStateContext);
   const { data, refetch } = useQuery<Holiday>({
     queryKey: [QUERY_KEYS.HOLIDAYS, year, month],
-    queryFn: () => Utils.fetchPublicHolidays({ year, month }),
+    queryFn: () => Utils.fetchPublicHolidays({ year, month: month - 2 }),
     enabled: false,
   });
   const dispatch = useContext(DateDispatchContext);
@@ -24,6 +27,8 @@ export default function Toolbar({ onNavigate }: ToolbarProps) {
 
   const onPreviousClick = () => {
     dispatch && dispatch({ type: 'prev' });
+    setClickedButtonType('prev');
+    refetch();
     navigate('PREV');
   };
 
